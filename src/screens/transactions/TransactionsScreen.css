@@ -1,0 +1,73 @@
+.txlist {
+  padding: 16px 20px 96px;
+}
+.txlist__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.txlist__filter {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-raised, #2a2a30);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.txlist__month {
+  color: var(--text-muted, #9a9aa3);
+}
+.txlist__totals {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--surface-card, #1a1a1f);
+}
+.txlist__totals span {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted, #9a9aa3);
+}
+.txlist__day-head {
+  margin: 20px 0 8px;
+  font-size: 14px;
+  color: var(--text-muted, #9a9aa3);
+}
+.txlist__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.txlist__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border, #2a2a30);
+}
+.txlist__item-sub {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted, #9a9aa3);
+}
+.txlist__amount--despesa,
+.txlist__amount--despesa-cartao {
+  color: var(--expense, rgb(229, 72, 77));
+}
+.txlist__amount--receita {
+  color: var(--income, rgb(43, 174, 163));
+}
+.txlist__amount--transferencia {
+  color: var(--text-primary, #fff);
+}
+.txlist__empty {
+  margin-top: 32px;
+  text-align: center;
+  color: var(--text-muted, #9a9aa3);
+}

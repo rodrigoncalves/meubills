@@ -29,9 +29,10 @@ const items: Item[] = [
 
 interface Props {
   onNewAction: (action: NewAction) => void;
+  onSelectView: (view: "dashboard" | "accounts" | "transactions") => void;
 }
 
-export function Sidebar({ onNewAction }: Props) {
+export function Sidebar({ onNewAction, onSelectView }: Props) {
   const [expanded, setExpanded] = useState(true);
   const [active, setActive] = useState("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -88,7 +89,12 @@ export function Sidebar({ onNewAction }: Props) {
           <button
             key={id}
             className={`sidebar__item${active === id ? " is-active" : ""}`}
-            onClick={() => setActive(id)}
+            onClick={() => {
+              setActive(id);
+              if (id === "dashboard") onSelectView("dashboard");
+              else if (id === "contas") onSelectView("accounts");
+              else if (id === "transacoes") onSelectView("transactions");
+            }}
             aria-current={active === id ? "page" : undefined}
             title={label}
           >

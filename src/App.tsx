@@ -10,6 +10,8 @@ import { activeGroupId } from "@/data/mock";
 import { DashboardDesktop } from "@/screens/dashboard/DashboardDesktop";
 import { HomeScreen } from "@/screens/home/HomeScreen";
 import { TransactionForm } from "@/screens/transaction/TransactionForm";
+import { AccountsScreen } from "@/screens/accounts/AccountsScreen";
+import { TransactionsScreen } from "@/screens/transactions/TransactionsScreen";
 import type { TransactionType } from "@/data/types";
 import "./App.css";
 
@@ -18,6 +20,7 @@ type Tab = "principal" | "transacoes" | "cartoes" | "mais";
 export function App() {
   const [tab, setTab] = useState<Tab>("principal");
   const [groupId, setGroupId] = useState(activeGroupId);
+  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions">("dashboard");
 
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
@@ -51,7 +54,7 @@ export function App() {
   return (
     <div className="app-shell">
       <div className="app-shell__sidebar">
-        <Sidebar onNewAction={handleNewAction} />
+        <Sidebar onNewAction={handleNewAction} onSelectView={setDesktopView} />
       </div>
 
       <main className="app-shell__content">
@@ -66,20 +69,30 @@ export function App() {
               onOpenGroupSwitcher={() => setGroupSheetOpen(true)}
               onOpenMonthPicker={() => setMonthSheetOpen(true)}
             />
+          ) : tab === "transacoes" ? (
+            <TransactionsScreen groupId={groupId} month={month} year={year} monthLabel={monthLabel} />
+          ) : tab === "mais" ? (
+            <AccountsScreen />
           ) : (
             <Placeholder tab={tab} />
           )}
         </div>
         {/* Desktop */}
         <div className="desktop-only">
-          <DashboardDesktop
-            groupId={groupId}
-            onSelectGroup={setGroupId}
-            month={month}
-            year={year}
-            onSelectMonth={handleSelectMonth}
-            monthLabel={monthLabel}
-          />
+          {desktopView === "accounts" ? (
+            <AccountsScreen />
+          ) : desktopView === "transactions" ? (
+            <TransactionsScreen groupId={groupId} month={month} year={year} monthLabel={monthLabel} />
+          ) : (
+            <DashboardDesktop
+              groupId={groupId}
+              onSelectGroup={setGroupId}
+              month={month}
+              year={year}
+              onSelectMonth={handleSelectMonth}
+              monthLabel={monthLabel}
+            />
+          )}
         </div>
       </main>
 

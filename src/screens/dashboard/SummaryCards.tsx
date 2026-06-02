@@ -1,16 +1,24 @@
 import { ArrowDownIcon, ArrowUpIcon, CardIcon, ReceiptIcon } from "@/components/icons";
-import type { CreditCard, Currency, HomeSummary } from "@/data/types";
+import type { CreditCard, Currency } from "@/data/types";
 import { maskMoney } from "@/lib/format";
+import { useAppState } from "@/store/AppStateProvider";
+import { homeBalance, monthExpense, monthIncome } from "@/store/selectors";
 import "./SummaryCards.css";
 
 interface Props {
-  summary: HomeSummary;
+  groupId: string;
+  month: number;
+  year: number;
   cards: CreditCard[];
   currency: Currency;
   visible: boolean;
 }
 
-export function SummaryCards({ summary, cards, currency, visible }: Props) {
+export function SummaryCards({ groupId, month, year, cards, currency, visible }: Props) {
+  const state = useAppState();
+  const balance = homeBalance(state, groupId);
+  const income = monthIncome(state, groupId, month, year);
+  const expense = monthExpense(state, groupId, month, year);
   const cardsTotal = cards.reduce((sum, c) => sum + c.invoiceAmount, 0);
 
   const items = [
@@ -18,19 +26,19 @@ export function SummaryCards({ summary, cards, currency, visible }: Props) {
       tone: "balance" as const,
       icon: <ReceiptIcon size={20} />,
       label: "Saldo atual em contas",
-      value: maskMoney(visible, summary.balance, currency),
+      value: maskMoney(visible, balance, currency),
     },
     {
       tone: "income" as const,
       icon: <ArrowUpIcon size={20} />,
       label: "Receitas",
-      value: maskMoney(visible, summary.income, currency),
+      value: maskMoney(visible, income, currency),
     },
     {
       tone: "expense" as const,
       icon: <ArrowDownIcon size={20} />,
       label: "Despesas",
-      value: maskMoney(visible, summary.expense, currency),
+      value: maskMoney(visible, expense, currency),
     },
     {
       tone: "credit" as const,

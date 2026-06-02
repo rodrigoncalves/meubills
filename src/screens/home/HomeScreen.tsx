@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { alerts, cards, resolveGroup, summary } from "@/data/mock";
+import { alerts, cards, resolveGroup } from "@/data/mock";
 import { Alerts } from "./Alerts";
 import { CardsSection } from "./CardsSection";
 import { Hero } from "./Hero";
@@ -8,12 +8,14 @@ import "./HomeScreen.css";
 
 interface Props {
   groupId: string;
+  month: number;
+  year: number;
   monthLabel: string;
   onOpenGroupSwitcher: () => void;
   onOpenMonthPicker: () => void;
 }
 
-export function HomeScreen({ groupId, monthLabel, onOpenGroupSwitcher, onOpenMonthPicker }: Props) {
+export function HomeScreen({ groupId, month, year, monthLabel, onOpenGroupSwitcher, onOpenMonthPicker }: Props) {
   const [visible, setVisible] = useState(true);
   const group = resolveGroup(groupId);
 
@@ -26,7 +28,9 @@ export function HomeScreen({ groupId, monthLabel, onOpenGroupSwitcher, onOpenMon
         onMonthClick={onOpenMonthPicker}
       />
       <Hero
-        summary={summary}
+        groupId={groupId}
+        month={month}
+        year={year}
         currency={group.currency}
         visible={visible}
         onToggleVisible={() => setVisible((v) => !v)}

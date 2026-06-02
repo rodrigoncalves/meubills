@@ -60,6 +60,8 @@ export function App() {
           {tab === "principal" ? (
             <HomeScreen
               groupId={groupId}
+              month={month}
+              year={year}
               monthLabel={monthLabel}
               onOpenGroupSwitcher={() => setGroupSheetOpen(true)}
               onOpenMonthPicker={() => setMonthSheetOpen(true)}

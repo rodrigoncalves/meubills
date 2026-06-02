@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GroupList } from "@/components/GroupList";
 import { ChevronDownIcon, EyeIcon, EyeOffIcon } from "@/components/icons";
 import { MonthPicker } from "@/components/MonthPicker";
-import { alerts, cards, consolidated, groups, resolveGroup, summary } from "@/data/mock";
+import { alerts, cards, consolidated, groups, resolveGroup } from "@/data/mock";
 import { Alerts } from "@/screens/home/Alerts";
 import { CardsSection } from "@/screens/home/CardsSection";
 import { SummaryCards } from "./SummaryCards";
@@ -106,7 +106,7 @@ export function DashboardDesktop({
         </div>
       </header>
 
-      <SummaryCards summary={summary} cards={cards} currency={group.currency} visible={visible} />
+      <SummaryCards groupId={groupId} month={month} year={year} cards={cards} currency={group.currency} visible={visible} />
 
       <div className="dashboard__grid">
         <div className="dashboard__main">

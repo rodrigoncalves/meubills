@@ -1,21 +1,30 @@
 import { ArrowDownIcon, ArrowUpIcon, EyeIcon, EyeOffIcon } from "@/components/icons";
-import type { Currency, HomeSummary } from "@/data/types";
+import type { Currency } from "@/data/types";
 import { maskMoney } from "@/lib/format";
+import { useAppState } from "@/store/AppStateProvider";
+import { homeBalance, monthExpense, monthIncome } from "@/store/selectors";
 import "./Hero.css";
 
 interface Props {
-  summary: HomeSummary;
+  groupId: string;
+  month: number;
+  year: number;
   currency: Currency;
   visible: boolean;
   onToggleVisible: () => void;
 }
 
-export function Hero({ summary, currency, visible, onToggleVisible }: Props) {
+export function Hero({ groupId, month, year, currency, visible, onToggleVisible }: Props) {
+  const state = useAppState();
+  const balance = homeBalance(state, groupId);
+  const income = monthIncome(state, groupId, month, year);
+  const expense = monthExpense(state, groupId, month, year);
+
   return (
     <section className="hero">
       <p className="hero__label">Saldo atual em contas</p>
 
-      <p className="hero__balance tnum">{maskMoney(visible, summary.balance, currency)}</p>
+      <p className="hero__balance tnum">{maskMoney(visible, balance, currency)}</p>
 
       <button
         className="hero__toggle"
@@ -31,13 +40,13 @@ export function Hero({ summary, currency, visible, onToggleVisible }: Props) {
           tone="income"
           icon={<ArrowUpIcon size={20} />}
           label="Receitas"
-          value={maskMoney(visible, summary.income, currency)}
+          value={maskMoney(visible, income, currency)}
         />
         <Stat
           tone="expense"
           icon={<ArrowDownIcon size={20} />}
           label="Despesas"
-          value={maskMoney(visible, summary.expense, currency)}
+          value={maskMoney(visible, expense, currency)}
         />
       </div>
     </section>

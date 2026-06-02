@@ -1,0 +1,22 @@
+.amount {
+  padding: 16px 20px;
+}
+.amount__field {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid var(--primary, rgb(108, 35, 224));
+  background: transparent;
+  color: var(--text-primary, #fff);
+  font-size: 32px;
+  font-weight: 600;
+  padding: 8px 0;
+}
+.amount--error .amount__field {
+  border-bottom-color: var(--expense, rgb(229, 72, 77));
+}
+.amount__error {
+  display: block;
+  margin-top: 6px;
+  color: var(--expense, rgb(229, 72, 77));
+  font-size: 13px;
+}

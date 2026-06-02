@@ -1,0 +1,44 @@
+.new-actions {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+}
+
+.new-actions__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: background var(--dur) var(--ease-out);
+}
+
+.new-actions__item:hover {
+  background: var(--surface-raised);
+}
+
+.new-actions__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+.new-actions__icon--expense {
+  color: var(--expense);
+}
+.new-actions__icon--income {
+  color: var(--income);
+}
+.new-actions__icon--credit {
+  color: var(--credit);
+}
+.new-actions__icon--balance {
+  color: var(--balance);
+}

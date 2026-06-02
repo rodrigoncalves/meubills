@@ -1,0 +1,144 @@
+.dashboard {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-8) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard__popover-anchor {
+  position: relative;
+}
+
+.popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: transparent;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 41;
+  min-width: 240px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  animation: popover-in var(--dur) var(--ease-out);
+}
+
+.popover--left {
+  left: 0;
+}
+
+.popover--right {
+  right: 0;
+  min-width: 0;
+}
+
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard__group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 6px 14px 6px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+}
+
+.dashboard__avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dashboard__group-name {
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+.dashboard__group svg {
+  color: var(--text-secondary);
+}
+
+.dashboard__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dashboard__month {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+.dashboard__month svg {
+  color: var(--text-secondary);
+}
+
+.dashboard__toggle {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: color var(--dur) var(--ease-out);
+}
+
+.dashboard__toggle:hover {
+  color: var(--text-primary);
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* Reuse mobile sections without their screen padding */
+.dashboard .cards,
+.dashboard .alerts {
+  padding: 0;
+}
+
+.dashboard .cards__panel {
+  box-shadow: none;
+  border: 1px solid var(--border);
+}

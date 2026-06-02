@@ -1,0 +1,97 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-5) var(--screen-x) var(--space-7);
+}
+
+.hero__label {
+  font-size: var(--fs-label);
+  color: var(--text-secondary);
+}
+
+.hero__balance {
+  margin-top: var(--space-2);
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.hero__toggle {
+  margin-top: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition:
+    color var(--dur) var(--ease-out),
+    background var(--dur) var(--ease-out);
+}
+
+.hero__toggle:active {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.hero__pair {
+  margin-top: var(--space-6);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.hero__stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.hero__disc {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+}
+
+.hero__disc--income {
+  background: var(--income-soft);
+  color: var(--income);
+}
+
+.hero__disc--expense {
+  background: var(--expense-soft);
+  color: var(--expense);
+}
+
+.hero__stat-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.hero__stat-label {
+  font-size: var(--fs-data-label);
+  color: var(--text-secondary);
+}
+
+.hero__stat-value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hero__stat-value--income {
+  color: var(--income);
+}
+
+.hero__stat-value--expense {
+  color: var(--expense);
+}

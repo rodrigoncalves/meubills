@@ -71,10 +71,10 @@ Group accents must stay secondary to semantic financial colors. For example, a P
 
 ## Typography
 
-Use a system UI stack:
+Primary UI font is **Maven Pro** (matches the Mobills reference), with a system UI fallback:
 
 ```css
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+font-family: "Maven Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 ```
 
 Type should feel native, efficient, and unshowy.

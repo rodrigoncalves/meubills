@@ -1,0 +1,3 @@
+.home {
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + var(--space-6));
+}

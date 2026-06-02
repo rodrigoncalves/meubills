@@ -1,0 +1,41 @@
+.app-shell {
+  min-height: 100%;
+}
+
+/* Mobile: single centered column, sidebar hidden */
+.app-shell__sidebar {
+  display: none;
+}
+
+.app-shell__content {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  color: var(--text-muted);
+  font-size: var(--fs-section);
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .app-shell {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .app-shell__sidebar {
+    display: block;
+    flex: none;
+  }
+
+  .app-shell__content {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+  }
+}

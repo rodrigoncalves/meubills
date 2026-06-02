@@ -6,4 +6,8 @@ build/
 .env.*
 !.env.example
 .superpowers/
+.impeccable/
 
+
+# TypeScript build info
+*.tsbuildinfo

@@ -1,0 +1,154 @@
+.cards {
+  padding: var(--space-6) var(--screen-x) 0;
+}
+
+.cards__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cards__panel {
+  background: var(--surface-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+}
+
+/* Segmented control */
+.seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+  padding: 4px;
+  background: var(--bg-app);
+  border-radius: var(--radius-pill);
+}
+
+.seg__btn {
+  padding: 9px 0;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition:
+    background var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out);
+}
+
+.seg__btn.is-active {
+  background: var(--credit-soft);
+  color: var(--credit);
+}
+
+/* List */
+.cards__list {
+  list-style: none;
+  margin-top: var(--space-2);
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.card-row__main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.card-row__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+}
+
+.card-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.card-row__name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.card-row__date {
+  font-size: var(--fs-data-label);
+  color: var(--text-secondary);
+}
+
+.card-row__limit {
+  font-size: var(--fs-data-label);
+  color: var(--text-muted);
+}
+
+.card-row__amount {
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--expense);
+  white-space: nowrap;
+}
+
+/* Actions */
+.card-row__action {
+  flex: none;
+}
+
+.card-action--add {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--credit);
+  color: var(--credit);
+}
+
+.card-action--pay {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: #fff;
+  background: var(--credit);
+}
+
+.card-action--paid {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--income);
+  white-space: nowrap;
+}
+
+/* Total */
+.cards__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-1) var(--space-1);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.cards__total .tnum {
+  font-size: 16px;
+  color: var(--text-primary);
+}

@@ -1,0 +1,117 @@
+.txform__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+.txform__cancel,
+.txform__spacer {
+  flex: 1;
+  min-width: 64px;
+}
+.txform__cancel {
+  border: 0;
+  background: transparent;
+  color: var(--primary, rgb(108, 35, 224));
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+.txform__fields {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+}
+.txform__row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--border, #2a2a30);
+  background: transparent;
+  color: var(--text-primary, #fff);
+  font-size: 15px;
+  cursor: pointer;
+}
+.txform__row-label {
+  color: var(--text-muted, #9a9aa3);
+}
+.txform__chips {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  flex-wrap: wrap;
+}
+.txform__chip {
+  padding: 6px 14px;
+  border: 1px solid var(--border, #2a2a30);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-primary, #fff);
+  cursor: pointer;
+}
+.txform__chip--active {
+  border-color: var(--primary, rgb(108, 35, 224));
+  color: var(--primary, rgb(108, 35, 224));
+}
+.txform__date {
+  background: transparent;
+  color: var(--text-primary, #fff);
+  border: 1px solid var(--border, #2a2a30);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.txform__text,
+.txform__toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border, #2a2a30);
+  color: var(--text-primary, #fff);
+}
+.txform__text input,
+.txform__text select {
+  flex: 1;
+  max-width: 60%;
+  background: transparent;
+  border: 0;
+  color: var(--text-primary, #fff);
+  text-align: right;
+  font-size: 15px;
+}
+.txform__more {
+  margin: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--primary, rgb(108, 35, 224));
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+.txform__footer {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+}
+.txform__save-again,
+.txform__save {
+  flex: 1;
+  padding: 14px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.txform__save-again {
+  background: var(--surface-raised, #2a2a30);
+  color: var(--text-primary, #fff);
+}
+.txform__save {
+  background: var(--primary, rgb(108, 35, 224));
+  color: #fff;
+}

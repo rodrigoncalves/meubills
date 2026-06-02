@@ -1,0 +1,29 @@
+.picker {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 8px;
+}
+
+.picker__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary, #fff);
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.picker__item--active {
+  color: var(--primary, rgb(108, 35, 224));
+  font-weight: 600;
+}
+
+.picker__hint {
+  color: var(--text-muted, #9a9aa3);
+  font-size: 13px;
+}

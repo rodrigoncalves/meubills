@@ -30,9 +30,9 @@ In scope:
   balance, each opening a sheet with a `Reajustar saldo` action.
 - **Reajuste de saldo** sheet (two modes: create adjustment transaction /
   modify initial balance).
-- Minimal **Transactions** screen (Transações) listing all transactions for the
-  selected month + group (expenses, incomes, transfers). No advanced filters
-  yet.
+- Minimal **Transactions** screen (Transações) listing transactions for the
+  selected month + group, with a **type filter** (Todas / Despesas / Receitas /
+  Transferências). No search / advanced filters yet.
 
 Out of scope (future rounds):
 
@@ -170,8 +170,13 @@ Actions:
   assigned to that invoice.
 - `invoiceLabel(month, year)` → `Fatura de <mês> de <ano>` (presentation
   helper).
-- `groupTransactions(state, groupId, month, year)` — for the Transactions
-  screen; includes despesa/receita/transferência, sorted by date desc.
+- `groupTransactions(state, groupId, month, year, filter)` — for the
+  Transactions screen, sorted by date desc. `filter` is
+  `"all" | "despesa" | "receita" | "transferencia"`:
+  - `all` → every type.
+  - `despesa` → `despesa` **and** `despesa-cartao`.
+  - `receita` → `receita`.
+  - `transferencia` → `transferencia`.
 
 This is a deliberate hybrid: `homeBalance` is fully derived from accounts (so it
 reacts to every transaction and to Reajuste), while income/expense use
@@ -228,9 +233,20 @@ Matches the Mobills reference:
 
 ### `TransactionsScreen` (Transações, minimal)
 
-- Lists `groupTransactions` for the selected month + group: despesas, receitas,
-  transferências. Transfer rows render two-sided (`De → Para`, neutral tone).
-- No advanced filters/search this round.
+- Top **type filter** pill (e.g. `Despesas ▾`) opens a menu with `Todas as
+  transações`, `Despesas`, `Receitas`, `Transferências`, each with its tone dot
+  (all = group accent, despesa = expense red, receita = income green,
+  transferência = blue). Selection drives the `filter` argument; the pill tints
+  to the active type.
+- Month navigator (`‹ Junho ›`) shares the app's selected month/group.
+- Lists `groupTransactions(group, month, year, filter)` grouped by day
+  (`Segunda-feira, 15`), sorted by date desc. Rows show category · account
+  subtitle, installment marker (`(2/3)`), and signed amount in the type tone.
+  Transfer rows render two-sided (`De → Para`, neutral tone).
+- Header totals scoped to the active filter: `Total pendente` (unsettled) and
+  `Total pago` (settled) for despesa/receita views; for `Todas`, show the net
+  month figures. (Minimal — derived from the filtered list.)
+- No search this round.
 
 ### Shared `PickerSheet`
 

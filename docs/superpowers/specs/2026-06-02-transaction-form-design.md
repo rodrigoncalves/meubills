@@ -32,13 +32,14 @@ In scope:
   modify initial balance).
 - Minimal **Transactions** screen (Transações) listing transactions for the
   selected month + group, with a **type filter** (Todas / Despesas / Receitas /
-  Transferências) and an **Agrupar por Cartão** view toggle that collapses card
-  expenses into one row per invoice. No search / other view options yet.
+  Transferências). No search / view options yet.
 
 Out of scope (future rounds):
 
-- Transactions screen filters/search, editing/deleting transactions.
-- Attachments persistence (`Anexo` field may render but stores nothing).
+- **Agrupar por Cartão** view toggle (collapsing card expenses into one invoice
+  row each) — next iteration.
+- Transactions screen search, other view options, editing/deleting transactions.
+- Attachments (`Anexo`) — not built at all, no field rendered.
 - Fully-derived summary (income/expense from a complete seeded ledger).
 - Account creation/editing UI beyond balance adjustment.
 
@@ -178,13 +179,6 @@ Actions:
   - `despesa` → `despesa` **and** `despesa-cartao`.
   - `receita` → `receita`.
   - `transferencia` → `transferencia`.
-- `transactionRows(state, groupId, month, year, filter, groupByCard)` — builds
-  the displayed rows. When `groupByCard` is true, all `despesa-cartao`
-  transactions in scope are collapsed into one **invoice row** per invoice:
-  `{ kind: "invoice", invoiceId, cardId, amount: Σ items, settled: all items
-  settled, date: invoice reference date }`, labeled `Fatura <Card>` in the UI.
-  Non-card transactions pass through as `{ kind: "transaction", tx }`. When
-  false, card expenses appear individually. Rows sorted by date desc.
 
 This is a deliberate hybrid: `homeBalance` is fully derived from accounts (so it
 reacts to every transaction and to Reajuste), while income/expense use
@@ -247,14 +241,11 @@ Matches the Mobills reference:
   transferência = blue). Selection drives the `filter` argument; the pill tints
   to the active type.
 - Month navigator (`‹ Junho ›`) shares the app's selected month/group.
-- **Agrupar por Cartão** toggle (in the screen's `•••` overflow). When on, card
-  expenses collapse into one invoice row each (`Fatura <Card>`, card icon, summed
-  amount, settled check if the invoice is paid); tapping could later expand to
-  its items (out of scope now). When off, card expenses list individually.
-- Lists `transactionRows(group, month, year, filter, groupByCard)` grouped by
-  day (`Segunda-feira, 15`), sorted by date desc. Transaction rows show
-  category · account subtitle, installment marker (`(2/3)`), and signed amount
-  in the type tone. Transfer rows render two-sided (`De → Para`, neutral tone).
+- Lists `groupTransactions(group, month, year, filter)` grouped by day
+  (`Segunda-feira, 15`), sorted by date desc. Rows show category · account
+  subtitle, installment marker (`(2/3)`), and signed amount in the type tone.
+  Card expenses appear individually this round. Transfer rows render two-sided
+  (`De → Para`, neutral tone).
 - Header totals scoped to the active filter: `Total pendente` (unsettled) and
   `Total pago` (settled) for despesa/receita views; for `Todas`, show the net
   month figures. (Minimal — derived from the filtered list.)

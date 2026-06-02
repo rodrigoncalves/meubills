@@ -1,0 +1,30 @@
+.type-pill {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--surface-raised, #2a2a30);
+  cursor: pointer;
+}
+
+.type-pill--despesa {
+  background: var(--expense, rgb(229, 72, 77));
+}
+
+.type-pill--receita {
+  background: var(--teal, rgb(43, 174, 163));
+}
+
+.type-pill--despesa-cartao {
+  background: var(--primary, rgb(108, 35, 224));
+}
+
+.type-pill--transferencia {
+  background: rgb(54, 130, 211);
+}
+
+.type-pill:disabled {
+  cursor: default;
+}

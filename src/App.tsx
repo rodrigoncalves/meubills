@@ -9,6 +9,8 @@ import { Sidebar } from "@/components/Sidebar";
 import { activeGroupId } from "@/data/mock";
 import { DashboardDesktop } from "@/screens/dashboard/DashboardDesktop";
 import { HomeScreen } from "@/screens/home/HomeScreen";
+import { TransactionForm } from "@/screens/transaction/TransactionForm";
+import type { TransactionType } from "@/data/types";
 import "./App.css";
 
 type Tab = "principal" | "transacoes" | "cartoes" | "mais";
@@ -25,11 +27,20 @@ export function App() {
   const [groupSheetOpen, setGroupSheetOpen] = useState(false);
   const [monthSheetOpen, setMonthSheetOpen] = useState(false);
 
+  const [formOpen, setFormOpen] = useState(false);
+  const [formType, setFormType] = useState<TransactionType>("despesa");
+
   const monthLabel = MONTHS_LONG[month];
 
   const handleNewAction = (action: NewAction) => {
-    // TODO: open the New Transaction screen for the chosen action
-    console.log("novo lançamento:", action);
+    const typeMap: Record<string, TransactionType> = {
+      despesa: "despesa",
+      receita: "receita",
+      "despesa-cartao": "despesa-cartao",
+      transferencia: "transferencia",
+    };
+    setFormType(typeMap[action] ?? "despesa");
+    setFormOpen(true);
   };
 
   const handleSelectMonth = (m: number, y: number) => {
@@ -94,6 +105,13 @@ export function App() {
           onSelect={handleSelectMonth}
         />
       </div>
+
+      <TransactionForm
+        open={formOpen}
+        initialType={formType}
+        initialGroupId={groupId}
+        onClose={() => setFormOpen(false)}
+      />
     </div>
   );
 }

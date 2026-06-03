@@ -107,6 +107,27 @@ export function cardInvoices(state: AppState, cardId: string) {
     .sort((a, b) => a.year - b.year || a.month - b.month);
 }
 
+export function cardsByGroup(state: AppState, groupId: string) {
+  return state.cards.filter((c) => c.groupId === groupId);
+}
+
+export function invoiceForMonth(
+  state: AppState,
+  cardId: string,
+  month: number,
+  year: number,
+) {
+  return state.invoices.find(
+    (inv) => inv.cardId === cardId && inv.month === month && inv.year === year,
+  );
+}
+
+export function invoiceTransactions(state: AppState, invoiceId: string) {
+  return state.transactions
+    .filter((t) => t.invoiceId === invoiceId)
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+}
+
 export function groupTransactions(
   state: AppState,
   groupId: string,

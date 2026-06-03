@@ -3,10 +3,13 @@ import type { Transaction } from "@/data/types";
 import { buildInitialState } from "@/store/reducer";
 import {
   accountBalance,
+  cardsByGroup,
   groupTransactions,
   homeBalance,
   invoiceAmount,
+  invoiceForMonth,
   invoiceLabel,
+  invoiceTransactions,
   monthExpense,
   monthIncome,
 } from "@/store/selectors";
@@ -122,5 +125,50 @@ describe("groupTransactions", () => {
     expect(groupTransactions(state, "pf", 5, 2026, "transferencia").map((t) => t.id)).toEqual([
       "4",
     ]);
+  });
+});
+
+describe("cardsByGroup", () => {
+  it("returns only cards matching the groupId", () => {
+    const state = buildInitialState();
+    const pf = cardsByGroup(state, "pf");
+    expect(pf.length).toBeGreaterThan(0);
+    expect(pf.every((c) => c.groupId === "pf")).toBe(true);
+  });
+
+  it("returns empty array for unknown group", () => {
+    const state = buildInitialState();
+    expect(cardsByGroup(state, "unknown")).toEqual([]);
+  });
+});
+
+describe("invoiceForMonth", () => {
+  it("finds the invoice for the given card, month, year", () => {
+    const state = buildInitialState();
+    const inv = invoiceForMonth(state, "nu", 5, 2026);
+    expect(inv?.id).toBe("inv-nu-jun");
+  });
+
+  it("returns undefined when no invoice exists for that month", () => {
+    const state = buildInitialState();
+    expect(invoiceForMonth(state, "nu", 0, 2025)).toBeUndefined();
+  });
+});
+
+describe("invoiceTransactions", () => {
+  it("returns transactions for the invoice, date desc", () => {
+    const state = buildInitialState();
+    state.transactions = [
+      tx({ id: "a", type: "despesa-cartao", invoiceId: "inv-nu-jun", cardId: "nu", date: "2026-06-01" }),
+      tx({ id: "b", type: "despesa-cartao", invoiceId: "inv-nu-jun", cardId: "nu", date: "2026-06-10" }),
+      tx({ id: "c", type: "despesa-cartao", invoiceId: "inv-c6-jun", cardId: "c6", date: "2026-06-05" }),
+    ];
+    const result = invoiceTransactions(state, "inv-nu-jun");
+    expect(result.map((t) => t.id)).toEqual(["b", "a"]);
+  });
+
+  it("returns empty array for invoice with no transactions", () => {
+    const state = buildInitialState();
+    expect(invoiceTransactions(state, "inv-nu-jun")).toEqual([]);
   });
 });

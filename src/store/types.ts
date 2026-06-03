@@ -50,4 +50,5 @@ export interface AdjustBalanceInput {
 
 export type Action =
   | { kind: "ADD_TRANSACTION"; input: NewTransactionInput }
-  | { kind: "ADJUST_BALANCE"; input: AdjustBalanceInput };
+  | { kind: "ADJUST_BALANCE"; input: AdjustBalanceInput }
+  | { kind: "DELETE_TRANSACTION"; id: string };

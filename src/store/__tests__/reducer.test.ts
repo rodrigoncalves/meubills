@@ -62,3 +62,27 @@ describe("appReducer ADJUST_BALANCE", () => {
     expect(acc?.initialBalance).toBe(1000);
   });
 });
+
+describe("appReducer DELETE_TRANSACTION", () => {
+  it("removes the transaction with the given id", () => {
+    const state = buildInitialState();
+    const after = appReducer(state, {
+      kind: "ADD_TRANSACTION",
+      input: baseExpense(),
+    });
+    const id = after.transactions.at(-1)!.id;
+    const final = appReducer(after, { kind: "DELETE_TRANSACTION", id });
+    expect(final.transactions.find((t) => t.id === id)).toBeUndefined();
+    expect(final.transactions).toHaveLength(state.transactions.length);
+  });
+
+  it("leaves other transactions untouched", () => {
+    const state = buildInitialState();
+    const s1 = appReducer(state, { kind: "ADD_TRANSACTION", input: baseExpense() });
+    const s2 = appReducer(s1, { kind: "ADD_TRANSACTION", input: baseExpense() });
+    const idToDelete = s2.transactions.at(-2)!.id;
+    const final = appReducer(s2, { kind: "DELETE_TRANSACTION", id: idToDelete });
+    expect(final.transactions).toHaveLength(s1.transactions.length);
+    expect(final.transactions.find((t) => t.id === idToDelete)).toBeUndefined();
+  });
+});

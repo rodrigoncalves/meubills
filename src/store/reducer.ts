@@ -89,6 +89,11 @@ export function appReducer(state: AppState, action: Action): AppState {
       };
       return { ...state, transactions: [...state.transactions, adjustment] };
     }
+    case "DELETE_TRANSACTION":
+      return {
+        ...state,
+        transactions: state.transactions.filter((t) => t.id !== action.id),
+      };
     default:
       return state;
   }

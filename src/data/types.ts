@@ -23,11 +23,16 @@ export type InvoiceStatus = "open" | "closed-pending" | "closed-paid";
 
 export interface CreditCard {
   id: string;
+  groupId: string;
   name: string;
   availableLimit: number;
   invoiceAmount: number;
-  /** day/month short label, e.g. "29/jun." */
+  /** Short closing/due date label for Home rows, e.g. "29/jun." */
   dateLabel: string;
+  /** Full closing date label for invoice detail hero, e.g. "29 de jun." */
+  closingLabel?: string;
+  /** Full due date label for invoice detail hero, e.g. "5 de jul." */
+  dueLabel?: string;
   status: InvoiceStatus;
 }
 

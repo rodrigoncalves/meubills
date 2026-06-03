@@ -2,8 +2,18 @@ import type { Account, Transaction, TransactionFilter } from "@/data/types";
 import type { AppState } from "@/store/types";
 
 const MONTHS_PT = [
-  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
 ];
 
 function round2(value: number): number {
@@ -59,7 +69,12 @@ export function monthIncome(state: AppState, groupId: string, month: number, yea
   return round2(base + delta);
 }
 
-export function monthExpense(state: AppState, groupId: string, month: number, year: number): number {
+export function monthExpense(
+  state: AppState,
+  groupId: string,
+  month: number,
+  year: number,
+): number {
   const base = state.baseSummaryByGroup[groupId]?.expense ?? 0;
   const delta = state.transactions
     .filter(

@@ -1,117 +1,914 @@
+/* ---- HEADER ---- */
+
 .txform__header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
+  gap: 8px;
+  padding: 12px 16px 14px;
 }
-.txform__cancel,
-.txform__spacer {
-  flex: 1;
-  min-width: 64px;
-}
+
 .txform__cancel {
+  justify-self: start;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.txform__title-wrap {
+  position: relative;
+  justify-self: center;
+  min-width: 0;
+}
+
+.txform__header-spacer {
+  justify-self: end;
+}
+
+.txform__type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.txform__type-btn:disabled {
+  cursor: default;
+}
+
+.txform__type-btn--despesa {
+  background: var(--expense);
+}
+.txform__type-btn--receita {
+  background: var(--income);
+}
+.txform__type-btn--despesa-cartao {
+  background: var(--primary);
+}
+.txform__type-btn--transferencia {
+  background: var(--info);
+}
+
+.txform__type-label--desktop {
+  display: none;
+}
+
+.txform__type-caret {
+  margin-top: 1px;
+  opacity: 0.9;
+}
+
+.txform__close {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .txform__header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 20px 14px;
+  }
+
+  .txform__cancel,
+  .txform__header-spacer {
+    display: none;
+  }
+
+  .txform__title-wrap {
+    justify-self: auto;
+  }
+
+  .txform__type-btn {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .txform__type-btn--despesa,
+  .txform__type-btn--receita,
+  .txform__type-btn--despesa-cartao,
+  .txform__type-btn--transferencia {
+    background: transparent;
+    color: var(--text-primary);
+  }
+
+  .txform__type-label--mobile {
+    display: none;
+  }
+
+  .txform__type-label--desktop {
+    display: inline;
+  }
+
+  .txform__type-caret {
+    color: var(--text-muted);
+    margin-top: 3px;
+    opacity: 1;
+  }
+
+  .txform__close {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 100ms;
+  }
+
+  .txform__close:hover {
+    color: var(--text-primary);
+  }
+}
+
+/* ---- AMOUNT ---- */
+
+.txform__amount-section {
+  padding: 4px 20px 16px;
+}
+
+.txform__amount-field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25em;
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid;
+  font-family: var(--font-ui);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.txform__amount-currency {
+  flex-shrink: 0;
+  padding: 4px 0 8px;
+}
+
+.txform__amount-input {
+  flex: 1;
+  min-width: 0;
   border: 0;
   background: transparent;
-  color: var(--primary, rgb(108, 35, 224));
+  font: inherit;
+  color: inherit;
+  padding: 4px 0 8px;
+  font-variant-numeric: inherit;
+  letter-spacing: inherit;
+}
+
+.txform__amount-field--despesa {
+  color: var(--expense);
+  border-bottom-color: var(--expense);
+}
+.txform__amount-field--receita {
+  color: var(--income-soft);
+  border-bottom-color: var(--income-soft);
+}
+.txform__amount-field--despesa-cartao {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.txform__amount-field--transferencia {
+  color: var(--info);
+  border-bottom-color: var(--info);
+}
+
+.txform__error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: rgb(245, 160, 10);
+}
+
+/* ---- BODY WRAP (two-column on desktop when expanded) ---- */
+
+.txform__body-wrap {
+  display: flex;
+  flex: 1;
+}
+
+.txform__main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.txform__extra-col {
+  display: none; /* hidden on mobile */
+}
+
+.txform__extra-mobile {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms var(--ease-out);
+}
+
+.txform__extra-mobile.is-open {
+  grid-template-rows: 1fr;
+}
+
+.txform__extra-mobile-inner {
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .txform__body-wrap--split .txform__main-col,
+  .txform__body-wrap--split .txform__body {
+    border-bottom: none;
+  }
+
+  .txform__extra-col {
+    display: flex;
+    flex-direction: column;
+    width: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      width 250ms var(--ease-out),
+      opacity 200ms var(--ease-out);
+  }
+
+  .txform__extra-col:not(.is-open) {
+    pointer-events: none;
+  }
+
+  .txform__extra-col.is-open {
+    width: var(--txform-extra-width);
+    opacity: 1;
+    padding-top: 8px;
+  }
+
+  .txform__extra-mobile {
+    display: none;
+  }
+}
+
+/* ---- EXTRA FIELDS ---- */
+
+.txform__extra-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- BODY ---- */
+
+.txform__body {
+  position: relative;
+}
+
+/* ---- ROWS ---- */
+
+.txform__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  padding-bottom: 8px;
+  border: 0;
+  width: 100%;
+  background: transparent;
+  color: var(--text-primary);
   font-size: 15px;
   text-align: left;
   cursor: pointer;
+  min-height: 52px;
 }
-.txform__fields {
-  display: flex;
-  flex-direction: column;
-  padding: 0 8px;
+
+.txform__row--date,
+.txform__row--input {
+  cursor: default;
 }
-.txform__row {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px 12px;
-  border: 0;
-  border-bottom: 1px solid var(--border, #2a2a30);
-  background: transparent;
-  color: var(--text-primary, #fff);
-  font-size: 15px;
-  cursor: pointer;
+
+.txform__row--muted {
+  cursor: default;
+  opacity: 0.45;
 }
+
+.txform__row-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
 .txform__row-label {
-  color: var(--text-muted, #9a9aa3);
+  color: var(--text-secondary);
+  font-size: 15px;
 }
-.txform__chips {
+
+.txform__row-label--grow {
+  flex: 1;
+}
+
+.txform__row-grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.txform__row-placeholder {
+  color: var(--text-muted);
+}
+
+.txform__chevron {
+  transition: transform 200ms;
+}
+
+.txform__chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.txform__divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 20px;
+}
+
+/* ---- DATE CHIPS ---- */
+
+.txform__date-chips {
   display: flex;
   gap: 8px;
   align-items: center;
-  padding: 12px;
   flex-wrap: wrap;
 }
+
 .txform__chip {
   padding: 6px 14px;
-  border: 1px solid var(--border, #2a2a30);
+  border: 1px solid var(--border);
   border-radius: 999px;
   background: transparent;
-  color: var(--text-primary, #fff);
+  color: var(--text-secondary);
+  font-size: 14px;
   cursor: pointer;
+  transition:
+    border-color 150ms,
+    background 150ms,
+    color 150ms;
 }
-.txform__chip--active {
-  border-color: var(--primary, rgb(108, 35, 224));
-  color: var(--primary, rgb(108, 35, 224));
+
+.txform__chip--active.txform__chip--despesa {
+  border-color: var(--expense);
+  background: var(--expense);
+  color: #fff;
 }
-.txform__date {
-  background: transparent;
-  color: var(--text-primary, #fff);
-  border: 1px solid var(--border, #2a2a30);
-  border-radius: 8px;
-  padding: 6px 10px;
+.txform__chip--active.txform__chip--receita {
+  border-color: var(--income-soft);
+  background: var(--income-soft);
+  color: #fff;
 }
-.txform__text,
-.txform__toggle {
+.txform__chip--active.txform__chip--despesa-cartao {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+.txform__chip--active.txform__chip--transferencia {
+  border-color: var(--info);
+  background: var(--info);
+  color: #fff;
+}
+
+.txform__date-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+/* ---- DESCRIPTION ---- */
+
+.txform__field {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+}
+
+.txform__field-error {
+  margin: -6px 20px 8px;
+  padding-left: 34px;
+  font-size: 13px;
+  color: rgb(245, 160, 10);
+}
+
+.txform__row--invalid {
+  background: rgba(255, 80, 80, 0.06);
+}
+
+.txform__desc-input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.txform__desc-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ---- CATEGORY PILL ---- */
+
+.txform__cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cat-color) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-color) 35%, transparent);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.txform__cat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cat-color);
+  flex-shrink: 0;
+}
+
+/* ---- ACCOUNT PILL ---- */
+
+.txform__account-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.txform__account-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--warning);
+  color: rgb(28, 28, 30);
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+
+/* ---- GROUP PILL ---- */
+
+.txform__group-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.txform__group-short {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--group-color) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--group-color) 40%, transparent);
+  color: var(--group-color);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.txform__inline-group-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+
+/* ---- ROW WRAP (positions dropdown relative to row) ---- */
+
+.txform__row-wrap {
+  position: relative;
+}
+
+/* ---- TYPE MENU (header) — layout in styles/action-menu.css ---- */
+
+.txform__type-menu {
+  position: fixed;
+  z-index: 960;
+}
+
+.txform__type-menu.action-menu-panel {
+  padding: 0;
+}
+
+/* ---- DROPDOWN DISMISS OVERLAY ---- */
+
+.txform__dropdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 958;
+}
+
+/* ---- INLINE LIST (category / account / card) ---- */
+
+.txform__inline-list {
+  position: fixed;
+  z-index: 960;
+  background: var(--surface-hero);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.txform__inline-item {
+  display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 12px;
-  border-bottom: 1px solid var(--border, #2a2a30);
-  color: var(--text-primary, #fff);
-}
-.txform__text input,
-.txform__text select {
-  flex: 1;
-  max-width: 60%;
-  background: transparent;
-  border: 0;
-  color: var(--text-primary, #fff);
-  text-align: right;
-  font-size: 15px;
-}
-.txform__more {
-  margin: 12px;
+  width: 100%;
+  padding: 13px 20px;
   border: 0;
   background: transparent;
-  color: var(--primary, rgb(108, 35, 224));
+  color: var(--text-primary);
   font-size: 15px;
   text-align: left;
   cursor: pointer;
+  transition: background 120ms;
 }
-.txform__footer {
-  margin-top: auto;
+
+.txform__inline-item:hover,
+.txform__inline-item:focus-visible {
+  background: var(--surface-raised);
+}
+
+.txform__inline-item.is-selected {
+  background: var(--primary-soft);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.txform__inline-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.txform__inline-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--warning);
+  color: rgb(28, 28, 30);
+  font-size: 10px;
+  font-weight: 800;
   display: flex;
-  gap: 12px;
-  padding: 16px 20px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.txform__save-again,
-.txform__save {
-  flex: 1;
-  padding: 14px;
+
+/* ---- TOGGLE SWITCH ---- */
+
+.txform__toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: 13px;
+  border: none;
+  background: var(--surface-raised);
+  cursor: pointer;
+  transition: background 180ms;
+}
+
+.txform__toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition:
+    transform 180ms,
+    background 180ms;
+}
+
+.txform__toggle.txform__toggle--on::after {
+  transform: translateX(20px);
+  background: #fff;
+}
+
+.txform__toggle.txform__toggle--on.txform__toggle--despesa {
+  background: var(--expense);
+}
+
+.txform__toggle.txform__toggle--on.txform__toggle--receita {
+  background: var(--income-soft);
+}
+
+/* ---- MORE DETAILS ---- */
+
+.txform__more-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-5);
+  padding: 0 var(--space-5);
+}
+
+.txform__more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  padding: 8px 22px;
+  margin: -6px -10px;
   border: 0;
-  border-radius: 999px;
-  font-size: 15px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    background var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out);
 }
-.txform__save-again {
-  background: var(--surface-raised, #2a2a30);
-  color: var(--text-primary, #fff);
+
+.txform__more-btn:hover {
+  background: var(--surface-raised);
+  color: var(--text-primary);
 }
-.txform__save {
-  background: var(--primary, rgb(108, 35, 224));
+
+.txform__more-btn:focus-visible {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.txform__more-icon {
+  flex-shrink: 0;
+  transition: transform 250ms var(--ease-out);
+}
+
+.txform__more-icon.is-open {
+  transform: rotate(180deg);
+}
+
+.txform__select,
+.txform__number-input {
+  background: transparent;
+  border: 0;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  text-align: right;
+}
+
+/* ---- REPEAT (Mobills-style) ---- */
+
+.txform__repeat-config {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 2px 20px 16px;
+  transition: opacity 180ms var(--ease-out);
+}
+
+.txform__repeat-config.is-disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.txform__repeat-config.is-disabled .txform__repeat-cell {
+  border-bottom-style: dotted;
+  border-bottom-color: color-mix(in srgb, var(--text-primary) 22%, transparent);
+}
+
+.txform__repeat-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--text-primary) 38%, transparent);
+  cursor: default;
+  transition:
+    border-color 180ms var(--ease-out),
+    border-style 180ms var(--ease-out);
+}
+
+.txform__repeat-cell--count {
+  padding-bottom: 0;
+}
+
+.txform__repeat-cell--count:focus-within {
+  border-bottom-color: color-mix(in srgb, var(--text-primary) 72%, transparent);
+}
+
+.txform__repeat-config--despesa .txform__repeat-cell--freq:focus-within {
+  border-bottom-color: var(--expense);
+}
+
+.txform__repeat-config--despesa-cartao .txform__repeat-cell--freq:focus-within {
+  border-bottom-color: var(--primary-raised);
+}
+
+.txform__repeat-count {
+  width: 2.5em;
+  min-width: 0;
+  flex: 0 1 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: left;
+  color-scheme: dark;
+  -moz-appearance: auto;
+  appearance: auto;
+}
+
+.txform__repeat-count::-webkit-inner-spin-button,
+.txform__repeat-count::-webkit-outer-spin-button {
+  opacity: 1;
+  margin-left: 2px;
+}
+
+.txform__repeat-count:disabled,
+.txform__repeat-freq:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.txform__repeat-count:focus-visible {
+  outline: none;
+}
+
+.txform__repeat-times {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.txform__repeat-cell--freq {
+  position: relative;
+  cursor: pointer;
+}
+
+.txform__repeat-freq {
+  flex: 1;
+  min-width: 0;
+  padding: 0 22px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.txform__repeat-freq:focus-visible {
+  outline: none;
+}
+
+.txform__repeat-freq-chevron {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* ---- FOOTER ---- */
+
+.txform__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: visible;
+  background: var(--bg-app);
+  padding: 0 var(--space-5) var(--space-6);
+  gap: var(--space-3);
+}
+
+.txform__btn-secondary,
+.txform__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: visible;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.txform__btn-secondary {
+  flex: 0 0 auto;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 150ms;
+}
+
+.txform__btn-secondary:hover:not(:disabled) {
+  background: var(--surface-raised);
+}
+
+.txform__btn-secondary:disabled {
+  background: transparent;
+  color: var(--text-muted);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.txform__btn-primary {
+  flex: 0 0 auto;
+  padding: 14px 36px;
+  min-width: 140px;
+  border: 0;
+  border-radius: 999px;
   color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: filter 150ms;
+}
+
+.txform__btn-primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.txform__btn-primary--despesa {
+  background: var(--expense);
+}
+.txform__btn-primary--receita {
+  background: var(--income);
+  color: rgb(28, 28, 30);
+}
+.txform__btn-primary--despesa-cartao {
+  background: var(--primary);
+}
+.txform__btn-primary--transferencia {
+  background: var(--info);
+}
+
+.txform__btn-primary:disabled {
+  background: var(--surface-nav-selected);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  filter: none;
 }

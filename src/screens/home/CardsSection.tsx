@@ -104,7 +104,7 @@ function CardAction({ card }: { card: CreditCard }) {
   if (card.status === "open") {
     return (
       <button className="card-action card-action--add" aria-label="Adicionar despesa no cartão">
-        <PlusIcon size={20} />
+        <PlusIcon size={18} />
       </button>
     );
   }

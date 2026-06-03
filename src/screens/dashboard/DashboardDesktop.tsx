@@ -106,7 +106,14 @@ export function DashboardDesktop({
         </div>
       </header>
 
-      <SummaryCards groupId={groupId} month={month} year={year} cards={cards} currency={group.currency} visible={visible} />
+      <SummaryCards
+        groupId={groupId}
+        month={month}
+        year={year}
+        cards={cards}
+        currency={group.currency}
+        visible={visible}
+      />
 
       <div className="dashboard__grid">
         <div className="dashboard__main">

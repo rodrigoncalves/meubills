@@ -1,20 +1,19 @@
 import { CardIcon, TransferIcon, TrendDownIcon, TrendUpIcon } from "./icons";
-import "./NewActionsList.css";
 
 export type NewAction = "despesa" | "receita" | "despesa-cartao" | "transferencia";
 
 interface ActionDef {
   id: NewAction;
   label: string;
-  tone: "expense" | "income" | "credit" | "balance";
+  iconTone: "expense" | "income" | "credit" | "info";
   Icon: typeof CardIcon;
 }
 
-const actions: ActionDef[] = [
-  { id: "despesa", label: "Despesa", tone: "expense", Icon: TrendDownIcon },
-  { id: "receita", label: "Receita", tone: "income", Icon: TrendUpIcon },
-  { id: "despesa-cartao", label: "Despesa cartão", tone: "credit", Icon: CardIcon },
-  { id: "transferencia", label: "Transferência", tone: "balance", Icon: TransferIcon },
+export const newActionItems: ActionDef[] = [
+  { id: "despesa", label: "Despesa", iconTone: "expense", Icon: TrendDownIcon },
+  { id: "receita", label: "Receita", iconTone: "income", Icon: TrendUpIcon },
+  { id: "despesa-cartao", label: "Despesa cartão", iconTone: "credit", Icon: CardIcon },
+  { id: "transferencia", label: "Transferência", iconTone: "info", Icon: TransferIcon },
 ];
 
 interface Props {
@@ -23,14 +22,14 @@ interface Props {
 
 export function NewActionsList({ onSelect }: Props) {
   return (
-    <ul className="new-actions" role="menu">
-      {actions.map(({ id, label, tone, Icon }) => (
+    <ul className="action-menu" role="menu">
+      {newActionItems.map(({ id, label, iconTone, Icon }) => (
         <li key={id} role="none">
-          <button className="new-actions__item" role="menuitem" onClick={() => onSelect(id)}>
-            <span className={`new-actions__icon new-actions__icon--${tone}`}>
-              <Icon size={20} />
+          <button type="button" className="action-menu__item" role="menuitem" onClick={() => onSelect(id)}>
+            <span className={`action-menu__icon action-menu__icon--${iconTone}`}>
+              <Icon size={22} />
             </span>
-            <span className="new-actions__label">{label}</span>
+            <span className="action-menu__label">{label}</span>
           </button>
         </li>
       ))}

@@ -1,0 +1,165 @@
+/* Full-width, zero-height anchor line sitting at the FAB's vertical center.
+   No transform here, so left:50% resolves against the real screen center and
+   the fixed backdrop can cover the whole viewport. */
+.fab-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) - var(--disc-size) / 2);
+  height: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+/* Backdrop dims the whole screen behind the menu. */
+.fab-menu__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.84);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--dur) var(--ease-out),
+    visibility var(--dur) var(--ease-out);
+}
+
+.fab-menu.is-open .fab-menu__backdrop {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* The FAB itself, centered on the anchor line. */
+.fab-menu__fab {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: 50%;
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -50%);
+  transition: background var(--dur) var(--ease-out);
+  pointer-events: auto;
+}
+
+.fab-menu__fab:active,
+.fab-menu__fab.is-open {
+  background: var(--primary-raised);
+}
+
+.fab-menu__fab-icon {
+  display: grid;
+  place-items: center;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+/* A plus rotated 45° becomes an ×, giving a smooth open/close morph. */
+.fab-menu__fab.is-open .fab-menu__fab-icon {
+  transform: rotate(45deg);
+}
+
+/* Items list adds no box of its own; slots anchor straight to the line. */
+.fab-menu__items {
+  display: contents;
+  list-style: none;
+}
+
+/* Each slot starts collapsed at the FAB center and fans out on open.
+   --x / --y are the resting offsets from the FAB center. */
+.fab-menu__slot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 88px;
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur) var(--ease-out),
+    visibility var(--dur) var(--ease-out);
+}
+
+.fab-menu.is-open .fab-menu__slot {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1);
+}
+
+/* Symmetric arc above the FAB. */
+.fab-menu__slot--0 {
+  --x: -66px;
+  --y: -132px;
+}
+.fab-menu__slot--1 {
+  --x: 66px;
+  --y: -132px;
+}
+.fab-menu__slot--2 {
+  --x: -132px;
+  --y: -66px;
+}
+.fab-menu__slot--3 {
+  --x: 132px;
+  --y: -66px;
+}
+
+.fab-menu.is-open .fab-menu__slot--2,
+.fab-menu.is-open .fab-menu__slot--3 {
+  transition-delay: 30ms;
+}
+.fab-menu.is-open .fab-menu__slot--0,
+.fab-menu.is-open .fab-menu__slot--1 {
+  transition-delay: 70ms;
+}
+
+.fab-menu__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 88px;
+}
+
+.fab-menu__disc {
+  display: grid;
+  place-items: center;
+  width: var(--disc-size);
+  height: var(--disc-size);
+  border-radius: 50%;
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.fab-menu__action:active .fab-menu__disc {
+  transform: scale(0.92);
+}
+
+.fab-menu__disc--income {
+  color: var(--income);
+}
+.fab-menu__disc--expense {
+  color: var(--expense);
+}
+.fab-menu__disc--credit {
+  color: var(--credit);
+}
+.fab-menu__disc--info {
+  color: var(--info);
+}
+
+.fab-menu__label {
+  font-size: var(--fs-data-label);
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--text-primary);
+}

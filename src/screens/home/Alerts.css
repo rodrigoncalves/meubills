@@ -1,5 +1,5 @@
 .alerts {
-  padding: var(--space-2) var(--screen-x) 0;
+  padding: var(--space-6) var(--screen-x) 0;
 }
 
 .section-title {
@@ -43,7 +43,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--surface-raised);
+  background: transparent;
   color: var(--text-secondary);
 }
 

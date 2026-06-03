@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BottomSheet } from "@/components/BottomSheet";
+import { AdaptiveSheet } from "@/components/AdaptiveSheet";
 import { AmountInput } from "@/components/form/AmountInput";
 import { useToast } from "@/components/Toast";
 import { resolveGroup } from "@/data/mock";
@@ -33,14 +33,24 @@ export function BalanceAdjustSheet({ accountId, onClose }: Props) {
     if (!account || disabled) return;
     dispatch({
       kind: "ADJUST_BALANCE",
-      input: { accountId: account.id, targetBalance: target, mode, description: description || undefined },
+      input: {
+        accountId: account.id,
+        targetBalance: target,
+        mode,
+        description: description || undefined,
+      },
     });
     toast.show("Saldo reajustado");
     onClose();
   };
 
   return (
-    <BottomSheet open={!!accountId} onClose={onClose} title="Reajuste de saldo">
+    <AdaptiveSheet
+      open={!!accountId}
+      onClose={onClose}
+      title="Reajuste de saldo"
+      panelClass="adaptive-sheet__panel--wide"
+    >
       <AmountInput value={target} currency={currency} onChange={setTarget} />
       <div className="adjust__current">
         <span>Saldo atual da conta</span>
@@ -77,6 +87,6 @@ export function BalanceAdjustSheet({ accountId, onClose }: Props) {
           SALVAR
         </button>
       </div>
-    </BottomSheet>
+    </AdaptiveSheet>
   );
 }

@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { AppStateProvider } from "@/store/AppStateProvider";
 import { ToastProvider } from "@/components/Toast";
+import { AppStateProvider } from "@/store/AppStateProvider";
 import { App } from "./App";
 import "./styles/global.css";
 

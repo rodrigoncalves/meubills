@@ -21,7 +21,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-1);
   padding: 4px;
-  background: var(--bg-app);
+  background: var(--surface-raised);
   border-radius: var(--radius-pill);
 }
 
@@ -36,9 +36,14 @@
     color var(--dur) var(--ease-out);
 }
 
+.seg__btn:hover:not(.is-active) {
+  background: var(--surface-nav-selected);
+  color: var(--text-primary);
+}
+
 .seg__btn.is-active {
-  background: var(--credit-soft);
-  color: var(--credit);
+  background: var(--credit);
+  color: #fff;
 }
 
 /* List */
@@ -71,7 +76,7 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: var(--surface-raised);
+  background: transparent;
   color: var(--text-secondary);
 }
 
@@ -113,8 +118,8 @@
 .card-action--add {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 1.5px solid var(--credit);
   color: var(--credit);
@@ -132,7 +137,7 @@
 .card-action--paid {
   font-size: var(--fs-label);
   font-weight: 600;
-  color: var(--income);
+  color: var(--credit);
   white-space: nowrap;
 }
 

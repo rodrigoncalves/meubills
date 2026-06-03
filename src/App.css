@@ -10,6 +10,15 @@
 .app-shell__content {
   max-width: 520px;
   margin: 0 auto;
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+}
+
+.app-shell__bottomnav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
 }
 
 .placeholder {
@@ -37,5 +46,6 @@
     min-width: 0;
     max-width: none;
     margin: 0;
+    padding-bottom: 0;
   }
 }

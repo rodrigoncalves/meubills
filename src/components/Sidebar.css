@@ -113,12 +113,12 @@
   top: calc(100% + 8px);
   left: 0;
   z-index: 41;
-  min-width: 232px;
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-card);
+  min-width: 260px;
   animation: menu-in var(--dur) var(--ease-out);
+}
+
+.sidebar__menu.action-menu-panel {
+  padding: 0;
 }
 
 @keyframes menu-in {

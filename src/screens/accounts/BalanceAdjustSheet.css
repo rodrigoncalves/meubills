@@ -45,6 +45,8 @@
   border: 0;
   border-bottom: 1px solid var(--border, #2a2a30);
   color: var(--text-primary, #fff);
+  font-family: var(--font-ui);
+  font-size: 15px;
 }
 .adjust__footer {
   display: flex;

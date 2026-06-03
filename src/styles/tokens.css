@@ -2,7 +2,7 @@
   /* Surfaces (dark theme, tinted neutrals) */
   --bg-app: rgb(28, 28, 30);
   --surface-hero: rgb(32, 32, 34);
-  --surface-card: rgb(34, 34, 36);
+  --surface-card: rgb(44, 44, 46); /* #2C2C2E */
   --surface-raised: rgb(39, 39, 42);
   --surface-nav-selected: rgb(58, 58, 61);
   --border: rgb(53, 53, 56);
@@ -26,9 +26,10 @@
   --credit: rgb(43, 174, 163);
 
   /* Tinted soft fills (for icon discs / chips) */
-  --income-soft: rgba(54, 211, 93, 0.14);
+  --income-soft: #66bb6a;
   --expense-soft: rgba(255, 80, 80, 0.14);
   --credit-soft: rgba(43, 174, 163, 0.14);
+  --info-soft: rgba(66, 156, 235, 0.14);
   --primary-soft: rgba(108, 35, 224, 0.16);
 
   /* Typography */
@@ -38,7 +39,8 @@
   --fs-body: 15px;
   --fs-label: 13px;
   --fs-data-label: 12px;
-  --fs-hero: 56px;
+  --fs-stat: 17px;
+  --fs-hero: 44px;
 
   /* Spacing */
   --space-1: 4px;
@@ -57,9 +59,10 @@
   --radius-pill: 999px;
   --radius-sm: 14px;
 
-  /* Nav */
-  --nav-height: 92px;
-  --fab-size: 64px;
+  /* Nav — FAB matches hero income/expense discs */
+  --nav-height: 58px;
+  --disc-size: 46px;
+  --fab-size: var(--disc-size);
 
   /* Elevation */
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
@@ -68,4 +71,8 @@
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 200ms;
+
+  /* Layout — use 1024px in @media (custom properties are not valid in @media) */
+  --bp-desktop: 1024px;
+  --txform-extra-width: 400px;
 }

@@ -1,0 +1,47 @@
+.month-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: max(var(--space-5), 8vh) var(--space-6) var(--space-6);
+}
+
+.month-sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  animation: month-sheet-fade var(--dur) var(--ease-out);
+}
+
+.month-sheet__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 320px;
+  animation: month-sheet-in var(--dur) var(--ease-out);
+}
+
+@keyframes month-sheet-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes month-sheet-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

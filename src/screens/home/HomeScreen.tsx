@@ -15,7 +15,14 @@ interface Props {
   onOpenMonthPicker: () => void;
 }
 
-export function HomeScreen({ groupId, month, year, monthLabel, onOpenGroupSwitcher, onOpenMonthPicker }: Props) {
+export function HomeScreen({
+  groupId,
+  month,
+  year,
+  monthLabel,
+  onOpenGroupSwitcher,
+  onOpenMonthPicker,
+}: Props) {
   const [visible, setVisible] = useState(true);
   const group = resolveGroup(groupId);
 

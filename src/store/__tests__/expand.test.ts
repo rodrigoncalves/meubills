@@ -31,11 +31,7 @@ describe("expandInstallments", () => {
     const rows = expandInstallments(tx, invoices);
     expect(rows).toHaveLength(3);
     expect(rows.map((r) => r.amount)).toEqual([33.34, 33.33, 33.33]);
-    expect(rows.map((r) => r.invoiceId)).toEqual([
-      "inv-nu-jun",
-      "inv-nu-jul",
-      "inv-nu-ago",
-    ]);
+    expect(rows.map((r) => r.invoiceId)).toEqual(["inv-nu-jun", "inv-nu-jul", "inv-nu-ago"]);
     expect(new Set(rows.map((r) => r.seriesId)).size).toBe(1);
   });
 

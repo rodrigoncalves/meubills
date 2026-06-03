@@ -21,10 +21,7 @@ function round2(value: number): number {
  * Splits a card expense across consecutive invoices starting at the selected
  * one. Even split; remainder cents land on the first installment.
  */
-export function expandInstallments(
-  tx: Transaction,
-  invoices: Invoice[],
-): Transaction[] {
+export function expandInstallments(tx: Transaction, invoices: Invoice[]): Transaction[] {
   const count = tx.installments ?? 1;
   if (count <= 1) return [{ ...tx }];
 

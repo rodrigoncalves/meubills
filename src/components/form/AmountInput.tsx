@@ -1,5 +1,5 @@
 import type { Currency } from "@/data/types";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, parseAmountFromDigits } from "@/lib/format";
 import "./AmountInput.css";
 
 interface Props {
@@ -12,8 +12,9 @@ interface Props {
 export function AmountInput({ value, currency, error, onChange }: Props) {
   const handleKey = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "");
-    const cents = digits === "" ? 0 : Number.parseInt(digits, 10);
-    onChange(cents / 100);
+    const next = parseAmountFromDigits(digits, currency);
+    if (next === null) return;
+    onChange(next);
   };
 
   return (

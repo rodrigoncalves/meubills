@@ -1,4 +1,4 @@
-import { BottomSheet } from "./BottomSheet";
+import { AdaptiveSheet } from "./AdaptiveSheet";
 import "./PickerSheet.css";
 
 export interface PickerOption {
@@ -18,7 +18,7 @@ interface Props {
 
 export function PickerSheet({ open, title, options, selectedId, onSelect, onClose }: Props) {
   return (
-    <BottomSheet open={open} onClose={onClose} title={title}>
+    <AdaptiveSheet open={open} onClose={onClose} title={title}>
       <ul className="picker" role="listbox">
         {options.map((opt) => (
           <li key={opt.id} role="none">
@@ -38,6 +38,6 @@ export function PickerSheet({ open, title, options, selectedId, onSelect, onClos
           </li>
         ))}
       </ul>
-    </BottomSheet>
+    </AdaptiveSheet>
   );
 }

@@ -1,4 +1,5 @@
 @import "./tokens.css";
+@import "./action-menu.css";
 
 * {
   box-sizing: border-box;
@@ -33,6 +34,72 @@ button {
   background: none;
   border: none;
   cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font-family: var(--font-ui);
+}
+
+:focus {
+  outline: none;
+}
+
+:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[role="switch"]:focus-visible,
+[role="tab"]:focus-visible,
+[tabindex]:focus-visible:not([tabindex="-1"]) {
+  box-shadow: 0 0 0 2px var(--focus-ring);
+}
+
+button:focus-visible:not(.txform__btn-primary):not(.bottom-nav__fab):not(.is-active):not(
+    .txform__toggle
+  ):not(.action-menu__item) {
+  background-color: var(--focus-surface);
+}
+
+button.action-menu__item:focus-visible {
+  box-shadow: none;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  background-color: var(--focus-surface);
+}
+
+button[aria-label]:not([role="switch"]):focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+button[aria-label]:not([role="switch"]):focus-visible::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-card);
 }
 
 .tnum {

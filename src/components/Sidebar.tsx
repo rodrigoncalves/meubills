@@ -77,7 +77,7 @@ export function Sidebar({ onNewAction, onSelectView }: Props) {
               aria-label="Fechar menu"
               onClick={() => setMenuOpen(false)}
             />
-            <div className="sidebar__menu" role="presentation">
+            <div className="sidebar__menu action-menu-panel" role="presentation">
               <NewActionsList onSelect={handleSelect} />
             </div>
           </>

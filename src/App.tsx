@@ -3,16 +3,15 @@ import { BottomNav } from "@/components/BottomNav";
 import { GroupSheet } from "@/components/GroupSheet";
 import { MONTHS_LONG } from "@/components/MonthPicker";
 import { MonthSheet } from "@/components/MonthSheet";
-import { NewActionSheet } from "@/components/NewActionSheet";
 import type { NewAction } from "@/components/NewActionsList";
 import { Sidebar } from "@/components/Sidebar";
 import { activeGroupId } from "@/data/mock";
+import type { TransactionType } from "@/data/types";
+import { AccountsScreen } from "@/screens/accounts/AccountsScreen";
 import { DashboardDesktop } from "@/screens/dashboard/DashboardDesktop";
 import { HomeScreen } from "@/screens/home/HomeScreen";
 import { TransactionForm } from "@/screens/transaction/TransactionForm";
-import { AccountsScreen } from "@/screens/accounts/AccountsScreen";
 import { TransactionsScreen } from "@/screens/transactions/TransactionsScreen";
-import type { TransactionType } from "@/data/types";
 import "./App.css";
 
 type Tab = "principal" | "transacoes" | "cartoes" | "mais";
@@ -20,13 +19,15 @@ type Tab = "principal" | "transacoes" | "cartoes" | "mais";
 export function App() {
   const [tab, setTab] = useState<Tab>("principal");
   const [groupId, setGroupId] = useState(activeGroupId);
-  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions">("dashboard");
+  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions">(
+    "dashboard",
+  );
 
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
 
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
   const [groupSheetOpen, setGroupSheetOpen] = useState(false);
   const [monthSheetOpen, setMonthSheetOpen] = useState(false);
 
@@ -70,7 +71,12 @@ export function App() {
               onOpenMonthPicker={() => setMonthSheetOpen(true)}
             />
           ) : tab === "transacoes" ? (
-            <TransactionsScreen groupId={groupId} month={month} year={year} monthLabel={monthLabel} />
+            <TransactionsScreen
+              groupId={groupId}
+              month={month}
+              year={year}
+              monthLabel={monthLabel}
+            />
           ) : tab === "mais" ? (
             <AccountsScreen />
           ) : (
@@ -82,7 +88,12 @@ export function App() {
           {desktopView === "accounts" ? (
             <AccountsScreen />
           ) : desktopView === "transactions" ? (
-            <TransactionsScreen groupId={groupId} month={month} year={year} monthLabel={monthLabel} />
+            <TransactionsScreen
+              groupId={groupId}
+              month={month}
+              year={year}
+              monthLabel={monthLabel}
+            />
           ) : (
             <DashboardDesktop
               groupId={groupId}
@@ -97,15 +108,17 @@ export function App() {
       </main>
 
       <div className="mobile-only app-shell__bottomnav">
-        <BottomNav active={tab} onSelect={setTab} onAdd={() => setSheetOpen(true)} />
+        <BottomNav
+          active={tab}
+          onSelect={setTab}
+          fabOpen={fabOpen}
+          onToggleFab={() => setFabOpen((v) => !v)}
+          onCloseFab={() => setFabOpen(false)}
+          onSelectAction={handleNewAction}
+        />
       </div>
 
       <div className="mobile-only">
-        <NewActionSheet
-          open={sheetOpen}
-          onClose={() => setSheetOpen(false)}
-          onSelect={handleNewAction}
-        />
         <GroupSheet
           open={groupSheetOpen}
           onClose={() => setGroupSheetOpen(false)}

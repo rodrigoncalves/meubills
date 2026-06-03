@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BottomSheet } from "@/components/BottomSheet";
+import { AdaptiveSheet } from "@/components/AdaptiveSheet";
 import { useAppState } from "@/store/AppStateProvider";
 import { BalanceAdjustSheet } from "./BalanceAdjustSheet";
 
@@ -15,7 +15,7 @@ export function AccountSheet({ accountId, onClose }: Props) {
 
   return (
     <>
-      <BottomSheet open={!!accountId && !adjusting} onClose={onClose} title={account?.name}>
+      <AdaptiveSheet open={!!accountId && !adjusting} onClose={onClose} title={account?.name}>
         <ul className="picker">
           <li>
             <button type="button" className="picker__item" onClick={() => setAdjusting(true)}>
@@ -23,7 +23,7 @@ export function AccountSheet({ accountId, onClose }: Props) {
             </button>
           </li>
         </ul>
-      </BottomSheet>
+      </AdaptiveSheet>
       <BalanceAdjustSheet
         accountId={adjusting ? accountId : null}
         onClose={() => {

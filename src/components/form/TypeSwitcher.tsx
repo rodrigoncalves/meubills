@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { TransactionType } from "@/data/types";
 import { PickerSheet } from "@/components/PickerSheet";
+import type { TransactionType } from "@/data/types";
 import "./TypeSwitcher.css";
 
 const LABELS: Record<TransactionType, string> = {

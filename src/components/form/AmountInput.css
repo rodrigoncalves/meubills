@@ -7,6 +7,7 @@
   border-bottom: 2px solid var(--primary, rgb(108, 35, 224));
   background: transparent;
   color: var(--text-primary, #fff);
+  font-family: var(--font-ui);
   font-size: 32px;
   font-weight: 600;
   padding: 8px 0;

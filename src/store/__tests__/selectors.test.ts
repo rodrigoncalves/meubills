@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { Transaction } from "@/data/types";
 import { buildInitialState } from "@/store/reducer";
 import {
   accountBalance,
@@ -9,7 +10,6 @@ import {
   monthExpense,
   monthIncome,
 } from "@/store/selectors";
-import type { Transaction } from "@/data/types";
 
 function tx(partial: Partial<Transaction>): Transaction {
   return {
@@ -41,7 +41,13 @@ describe("accountBalance", () => {
   it("applies transfers to both sides", () => {
     const state = buildInitialState();
     state.transactions = [
-      tx({ id: "t", type: "transferencia", amount: 50, fromAccountId: "pf-cc", toAccountId: "pf-wallet" }),
+      tx({
+        id: "t",
+        type: "transferencia",
+        amount: 50,
+        fromAccountId: "pf-cc",
+        toAccountId: "pf-wallet",
+      }),
     ];
     expect(accountBalance(state, "pf-cc")).toBe(850); // 900 - 50
     expect(accountBalance(state, "pf-wallet")).toBe(314); // 264 + 50
@@ -91,11 +97,30 @@ describe("groupTransactions", () => {
     state.transactions = [
       tx({ id: "1", type: "despesa", date: "2026-06-01" }),
       tx({ id: "2", type: "receita", date: "2026-06-02" }),
-      tx({ id: "3", type: "despesa-cartao", date: "2026-06-03", cardId: "nu", invoiceId: "inv-nu-jun" }),
-      tx({ id: "4", type: "transferencia", date: "2026-06-04", fromAccountId: "pf-cc", toAccountId: "pf-wallet" }),
+      tx({
+        id: "3",
+        type: "despesa-cartao",
+        date: "2026-06-03",
+        cardId: "nu",
+        invoiceId: "inv-nu-jun",
+      }),
+      tx({
+        id: "4",
+        type: "transferencia",
+        date: "2026-06-04",
+        fromAccountId: "pf-cc",
+        toAccountId: "pf-wallet",
+      }),
     ];
     expect(groupTransactions(state, "pf", 5, 2026, "despesa").map((t) => t.id)).toEqual(["3", "1"]);
-    expect(groupTransactions(state, "pf", 5, 2026, "all").map((t) => t.id)).toEqual(["4", "3", "2", "1"]);
-    expect(groupTransactions(state, "pf", 5, 2026, "transferencia").map((t) => t.id)).toEqual(["4"]);
+    expect(groupTransactions(state, "pf", 5, 2026, "all").map((t) => t.id)).toEqual([
+      "4",
+      "3",
+      "2",
+      "1",
+    ]);
+    expect(groupTransactions(state, "pf", 5, 2026, "transferencia").map((t) => t.id)).toEqual([
+      "4",
+    ]);
   });
 });

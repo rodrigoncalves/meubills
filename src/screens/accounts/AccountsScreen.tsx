@@ -27,9 +27,15 @@ export function AccountsScreen() {
             <ul className="accounts__list">
               {accounts.map((a) => (
                 <li key={a.id}>
-                  <button type="button" className="accounts__row" onClick={() => setActiveAccount(a.id)}>
+                  <button
+                    type="button"
+                    className="accounts__row"
+                    onClick={() => setActiveAccount(a.id)}
+                  >
                     <span>{a.name}</span>
-                    <span>{formatMoney(accountBalance(state, a.id), resolveGroup(a.groupId).currency)}</span>
+                    <span>
+                      {formatMoney(accountBalance(state, a.id), resolveGroup(a.groupId).currency)}
+                    </span>
                   </button>
                 </li>
               ))}
@@ -37,10 +43,7 @@ export function AccountsScreen() {
           </section>
         ),
       )}
-      <AccountSheet
-        accountId={activeAccount}
-        onClose={() => setActiveAccount(null)}
-      />
+      <AccountSheet accountId={activeAccount} onClose={() => setActiveAccount(null)} />
     </div>
   );
 }

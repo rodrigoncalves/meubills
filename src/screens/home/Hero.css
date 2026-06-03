@@ -4,6 +4,8 @@
   align-items: center;
   text-align: center;
   padding: var(--space-5) var(--screen-x) var(--space-7);
+  background: var(--surface-card);
+  border-radius: 0 0 var(--radius-hero) var(--radius-hero);
 }
 
 .hero__label {
@@ -14,7 +16,7 @@
 .hero__balance {
   margin-top: var(--space-2);
   font-size: var(--fs-hero);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.05;
 }
@@ -56,19 +58,19 @@
   display: grid;
   place-items: center;
   flex: none;
-  width: 46px;
-  height: 46px;
+  width: var(--disc-size);
+  height: var(--disc-size);
   border-radius: 50%;
 }
 
 .hero__disc--income {
-  background: var(--income-soft);
-  color: var(--income);
+  background: var(--income);
+  color: #fff;
 }
 
 .hero__disc--expense {
-  background: var(--expense-soft);
-  color: var(--expense);
+  background: var(--expense);
+  color: #fff;
 }
 
 .hero__stat-text {
@@ -79,13 +81,13 @@
 }
 
 .hero__stat-label {
-  font-size: var(--fs-data-label);
+  font-size: var(--fs-label);
   color: var(--text-secondary);
 }
 
 .hero__stat-value {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fs-stat);
+  font-weight: 700;
 }
 
 .hero__stat-value--income {

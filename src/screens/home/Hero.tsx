@@ -38,13 +38,13 @@ export function Hero({ groupId, month, year, currency, visible, onToggleVisible 
       <div className="hero__pair">
         <Stat
           tone="income"
-          icon={<ArrowUpIcon size={20} />}
+          icon={<ArrowUpIcon size={30} />}
           label="Receitas"
           value={maskMoney(visible, income, currency)}
         />
         <Stat
           tone="expense"
-          icon={<ArrowDownIcon size={20} />}
+          icon={<ArrowDownIcon size={30} />}
           label="Despesas"
           value={maskMoney(visible, expense, currency)}
         />

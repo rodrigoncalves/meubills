@@ -1,9 +1,9 @@
 import {
   ADJUST_EXPENSE_CATEGORY,
   ADJUST_INCOME_CATEGORY,
-  accounts as seedAccounts,
   baseInvoiceAmounts,
   baseSummaryByGroup,
+  accounts as seedAccounts,
   cards as seedCards,
   categories as seedCategories,
   groups as seedGroups,

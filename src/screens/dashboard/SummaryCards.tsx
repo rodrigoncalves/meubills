@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowUpIcon, CardIcon, ReceiptIcon } from "@/components/icons";
+import { ArrowDownIcon, ArrowUpIcon, BankIcon, CardIcon } from "@/components/icons";
 import type { CreditCard, Currency } from "@/data/types";
 import { maskMoney } from "@/lib/format";
 import { useAppState } from "@/store/AppStateProvider";
@@ -24,25 +24,25 @@ export function SummaryCards({ groupId, month, year, cards, currency, visible }:
   const items = [
     {
       tone: "balance" as const,
-      icon: <ReceiptIcon size={20} />,
+      icon: <BankIcon size={26} />,
       label: "Saldo atual em contas",
       value: maskMoney(visible, balance, currency),
     },
     {
       tone: "income" as const,
-      icon: <ArrowUpIcon size={20} />,
+      icon: <ArrowUpIcon size={30} />,
       label: "Receitas",
       value: maskMoney(visible, income, currency),
     },
     {
       tone: "expense" as const,
-      icon: <ArrowDownIcon size={20} />,
+      icon: <ArrowDownIcon size={30} />,
       label: "Despesas",
       value: maskMoney(visible, expense, currency),
     },
     {
       tone: "credit" as const,
-      icon: <CardIcon size={20} />,
+      icon: <CardIcon size={26} />,
       label: "Cartões de crédito",
       value: maskMoney(visible, cardsTotal, currency),
     },

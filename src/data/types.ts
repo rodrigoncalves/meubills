@@ -31,11 +31,7 @@ export interface CreditCard {
   status: InvoiceStatus;
 }
 
-export type TransactionType =
-  | "despesa"
-  | "receita"
-  | "despesa-cartao"
-  | "transferencia";
+export type TransactionType = "despesa" | "receita" | "despesa-cartao" | "transferencia";
 
 export type Recurrence = "none" | "fixed" | "monthly";
 
@@ -89,8 +85,4 @@ export interface Transaction {
   createdAt: string; // ISO timestamp
 }
 
-export type TransactionFilter =
-  | "all"
-  | "despesa"
-  | "receita"
-  | "transferencia";
+export type TransactionFilter = "all" | "despesa" | "receita" | "transferencia";

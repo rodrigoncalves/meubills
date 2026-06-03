@@ -31,6 +31,7 @@ interface Props {
   open: boolean;
   initialType: TransactionType;
   initialGroupId: string;
+  initialCardId?: string;
   onClose: () => void;
 }
 
@@ -122,7 +123,7 @@ function isTransactionFormValid(
   return Boolean(fields.categoryId && fields.accountId);
 }
 
-export function TransactionForm({ open, initialType, initialGroupId, onClose }: Props) {
+export function TransactionForm({ open, initialType, initialGroupId, initialCardId, onClose }: Props) {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -135,7 +136,8 @@ export function TransactionForm({ open, initialType, initialGroupId, onClose }: 
     if (!open) return;
     setType(initialType);
     setGroupId(initialGroupId);
-  }, [open, initialType, initialGroupId]);
+    if (initialCardId) setCardId(initialCardId);
+  }, [open, initialType, initialGroupId, initialCardId]);
   const [amount, setAmount] = useState(0);
   const [date, setDate] = useState(todayISO());
   const [description, setDescription] = useState("");

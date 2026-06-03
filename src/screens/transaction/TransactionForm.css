@@ -162,7 +162,7 @@
 
 .txform__amount-currency {
   flex-shrink: 0;
-  padding: 4px 0 8px;
+  padding: 4px 0;
 }
 
 .txform__amount-input {
@@ -172,7 +172,7 @@
   background: transparent;
   font: inherit;
   color: inherit;
-  padding: 4px 0 8px;
+  padding: 4px 0;
   font-variant-numeric: inherit;
   letter-spacing: inherit;
 }
@@ -186,8 +186,8 @@
   border-bottom-color: var(--income-soft);
 }
 .txform__amount-field--despesa-cartao {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--credit);
+  border-bottom-color: var(--credit);
 }
 .txform__amount-field--transferencia {
   color: var(--info);
@@ -377,8 +377,8 @@
   color: #fff;
 }
 .txform__chip--active.txform__chip--despesa-cartao {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--credit);
+  background: var(--credit);
   color: #fff;
 }
 .txform__chip--active.txform__chip--transferencia {
@@ -900,7 +900,7 @@
   color: rgb(28, 28, 30);
 }
 .txform__btn-primary--despesa-cartao {
-  background: var(--primary);
+  background: var(--credit);
 }
 .txform__btn-primary--transferencia {
   background: var(--info);

@@ -29,7 +29,7 @@ const items: Item[] = [
 
 interface Props {
   onNewAction: (action: NewAction) => void;
-  onSelectView: (view: "dashboard" | "accounts" | "transactions") => void;
+  onSelectView: (view: "dashboard" | "accounts" | "transactions" | "cards") => void;
 }
 
 export function Sidebar({ onNewAction, onSelectView }: Props) {
@@ -94,6 +94,7 @@ export function Sidebar({ onNewAction, onSelectView }: Props) {
               if (id === "dashboard") onSelectView("dashboard");
               else if (id === "contas") onSelectView("accounts");
               else if (id === "transacoes") onSelectView("transactions");
+              else if (id === "cartoes") onSelectView("cards");
             }}
             aria-current={active === id ? "page" : undefined}
             title={label}

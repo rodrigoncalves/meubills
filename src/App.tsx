@@ -11,6 +11,7 @@ import { AccountsScreen } from "@/screens/accounts/AccountsScreen";
 import { DashboardDesktop } from "@/screens/dashboard/DashboardDesktop";
 import { HomeScreen } from "@/screens/home/HomeScreen";
 import { TransactionForm } from "@/screens/transaction/TransactionForm";
+import { CardsScreen } from "@/screens/cards/CardsScreen";
 import { TransactionsScreen } from "@/screens/transactions/TransactionsScreen";
 import "./App.css";
 
@@ -19,7 +20,7 @@ type Tab = "principal" | "transacoes" | "cartoes" | "mais";
 export function App() {
   const [tab, setTab] = useState<Tab>("principal");
   const [groupId, setGroupId] = useState(activeGroupId);
-  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions">(
+  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions" | "cards">(
     "dashboard",
   );
 
@@ -33,6 +34,7 @@ export function App() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [formType, setFormType] = useState<TransactionType>("despesa");
+  const [formCardId, setFormCardId] = useState<string | undefined>(undefined);
 
   const monthLabel = MONTHS_LONG[month];
 
@@ -44,6 +46,13 @@ export function App() {
       transferencia: "transferencia",
     };
     setFormType(typeMap[action] ?? "despesa");
+    setFormCardId(undefined);
+    setFormOpen(true);
+  };
+
+  const handleAddCardExpense = (cardId: string) => {
+    setFormType("despesa-cartao");
+    setFormCardId(cardId);
     setFormOpen(true);
   };
 
@@ -77,6 +86,11 @@ export function App() {
               year={year}
               monthLabel={monthLabel}
             />
+          ) : tab === "cartoes" ? (
+            <CardsScreen
+              activeGroupId={groupId}
+              onAddCardExpense={handleAddCardExpense}
+            />
           ) : tab === "mais" ? (
             <AccountsScreen />
           ) : (
@@ -85,7 +99,12 @@ export function App() {
         </div>
         {/* Desktop */}
         <div className="desktop-only">
-          {desktopView === "accounts" ? (
+          {desktopView === "cards" ? (
+            <CardsScreen
+              activeGroupId={groupId}
+              onAddCardExpense={handleAddCardExpense}
+            />
+          ) : desktopView === "accounts" ? (
             <AccountsScreen />
           ) : desktopView === "transactions" ? (
             <TransactionsScreen
@@ -138,6 +157,7 @@ export function App() {
         open={formOpen}
         initialType={formType}
         initialGroupId={groupId}
+        initialCardId={formCardId}
         onClose={() => setFormOpen(false)}
       />
     </div>

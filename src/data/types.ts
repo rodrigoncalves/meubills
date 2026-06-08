@@ -19,13 +19,13 @@ export interface PendingAlerts {
   closedInvoices: { count: number; total: number };
 }
 
-export type InvoiceStatus = "open" | "closed-pending" | "closed-paid";
+export type InvoiceStatus = "open" | "closed" | "paid";
 
 export interface CreditCard {
   id: string;
   groupId: string;
   name: string;
-  availableLimit: number;
+  totalLimit: number;
   invoiceAmount: number;
   /** Short closing/due date label for Home rows, e.g. "29/jun." */
   dateLabel: string;
@@ -33,7 +33,14 @@ export interface CreditCard {
   closingLabel?: string;
   /** Full due date label for invoice detail hero, e.g. "5 de jul." */
   dueLabel?: string;
-  status: InvoiceStatus;
+  /** Soft delete — hidden from list when true. */
+  archived?: boolean;
+  /** Linked account for auto-pay. */
+  accountId?: string;
+  /** Day of month the invoice closes (1-31). */
+  closingDay?: number;
+  /** Day of month the invoice is due (1-31). */
+  dueDay?: number;
 }
 
 export type TransactionType = "despesa" | "receita" | "despesa-cartao" | "transferencia";
@@ -65,7 +72,10 @@ export interface Invoice {
   cardId: string;
   month: number; // 0-11
   year: number;
-  status: InvoiceStatus;
+  /** Whether this invoice has been paid. */
+  paid: boolean;
+  /** Transaction ID of the payment (for reopen/reversal). */
+  paymentTransactionId?: string;
 }
 
 export interface Transaction {

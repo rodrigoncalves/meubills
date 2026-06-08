@@ -46,7 +46,7 @@ export const summary: HomeSummary = {
 
 export const alerts: PendingAlerts = {
   pendingExpenses: { count: 8, total: 5372.32 },
-  closedInvoices: { count: 2, total: 9887.32 },
+  closedInvoices: { count: 4, total: 5307.64 },
 };
 
 /** Sorted alphabetically by displayed name (per DESIGN.md). */
@@ -55,45 +55,49 @@ const cardList: CreditCard[] = [
     id: "c6",
     groupId: "pf",
     name: "C6 Bank",
-    availableLimit: 7528.0,
-    invoiceAmount: 2471.0,
-    dateLabel: "29/jun.",
-    closingLabel: "29 de jun.",
-    dueLabel: "5 de jul.",
-    status: "open",
+    totalLimit: 7528.0,
+    invoiceAmount: 3200.5,
+    dateLabel: "07/jun.",
+    closingLabel: "7 de jun.",
+    dueLabel: "12 de jul.",
+    closingDay: 7,
+    dueDay: 12,
   },
   {
     id: "mp",
     groupId: "pf",
     name: "Mercado Pago",
-    availableLimit: 1240.18,
-    invoiceAmount: 259.18,
+    totalLimit: 1240.18,
+    invoiceAmount: 410.3,
     dateLabel: "05/jun.",
-    closingLabel: "29 de mai.",
-    dueLabel: "5 de jun.",
-    status: "closed-paid",
+    closingLabel: "5 de jun.",
+    dueLabel: "10 de jul.",
+    closingDay: 5,
+    dueDay: 10,
   },
   {
     id: "nu",
     groupId: "pf",
     name: "Nubank",
-    availableLimit: 3254.99,
-    invoiceAmount: 745.01,
-    dateLabel: "25/jun.",
-    closingLabel: "25 de jun.",
-    dueLabel: "2 de jul.",
-    status: "open",
+    totalLimit: 3254.99,
+    invoiceAmount: 890.0,
+    dateLabel: "02/jun.",
+    closingLabel: "2 de jun.",
+    dueLabel: "8 de jul.",
+    closingDay: 2,
+    dueDay: 8,
   },
   {
     id: "will",
     groupId: "pf",
     name: "Will Bank",
-    availableLimit: 0,
-    invoiceAmount: 1832.45,
-    dateLabel: "05/jun.",
-    closingLabel: "29 de mai.",
-    dueLabel: "5 de jun.",
-    status: "closed-pending",
+    totalLimit: 0,
+    invoiceAmount: 2100.0,
+    dateLabel: "03/jun.",
+    closingLabel: "3 de jun.",
+    dueLabel: "8 de jul.",
+    closingDay: 3,
+    dueDay: 8,
   },
 ];
 
@@ -169,20 +173,26 @@ export const categories: Category[] = [
 ];
 
 export const invoices: Invoice[] = [
-  { id: "inv-c6-jun", cardId: "c6", month: 5, year: 2026, status: "open" },
-  { id: "inv-c6-jul", cardId: "c6", month: 6, year: 2026, status: "open" },
-  { id: "inv-mp-jun", cardId: "mp", month: 5, year: 2026, status: "closed-paid" },
-  { id: "inv-nu-jun", cardId: "nu", month: 5, year: 2026, status: "open" },
-  { id: "inv-nu-jul", cardId: "nu", month: 6, year: 2026, status: "open" },
-  { id: "inv-will-jun", cardId: "will", month: 5, year: 2026, status: "closed-pending" },
+  { id: "inv-c6-jun", cardId: "c6", month: 5, year: 2026, paid: false },
+  { id: "inv-c6-jul", cardId: "c6", month: 6, year: 2026, paid: false },
+  { id: "inv-mp-jun", cardId: "mp", month: 5, year: 2026, paid: false },
+  { id: "inv-mp-jul", cardId: "mp", month: 6, year: 2026, paid: false },
+  { id: "inv-nu-jun", cardId: "nu", month: 5, year: 2026, paid: false },
+  { id: "inv-nu-jul", cardId: "nu", month: 6, year: 2026, paid: false },
+  { id: "inv-will-jun", cardId: "will", month: 5, year: 2026, paid: false },
+  { id: "inv-will-jul", cardId: "will", month: 6, year: 2026, paid: false },
 ];
 
 /** Seeded invoice totals (base the store applies card-expense deltas on top of). */
 export const baseInvoiceAmounts: Record<string, number> = {
   "inv-c6-jun": 2471.0,
+  "inv-c6-jul": 3200.5,
   "inv-mp-jun": 259.18,
+  "inv-mp-jul": 410.3,
   "inv-nu-jun": 745.01,
+  "inv-nu-jul": 890.0,
   "inv-will-jun": 1832.45,
+  "inv-will-jul": 2100.0,
 };
 
 /** Seeded month income/expense per group for SEED_MONTH/SEED_YEAR. */

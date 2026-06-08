@@ -75,7 +75,7 @@
   display: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 520px) {
   .txform__header {
     display: flex;
     justify-content: space-between;
@@ -232,7 +232,7 @@
   overflow: hidden;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 520px) {
   .txform__body-wrap--split .txform__main-col,
   .txform__body-wrap--split .txform__body {
     border-bottom: none;

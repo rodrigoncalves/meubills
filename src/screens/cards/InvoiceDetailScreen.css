@@ -247,7 +247,7 @@
 }
 
 /* Desktop: table layout */
-@media (min-width: 1024px) {
+@media (min-width: 520px) {
   .invoice-detail {
     flex-direction: row;
     align-items: flex-start;

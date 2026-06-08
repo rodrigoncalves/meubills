@@ -1,0 +1,145 @@
+.cardform {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.cardform__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4) var(--space-3);
+  flex: none;
+}
+
+.cardform__title {
+  flex: 1;
+  font-size: var(--fs-section);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.cardform__close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  flex: none;
+}
+
+.cardform__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 0 var(--space-4) var(--space-6);
+}
+
+.cardform__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.cardform__label {
+  font-size: var(--fs-data-label);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cardform__input {
+  padding: 12px 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  font-family: var(--font-ui);
+}
+
+.cardform__input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.cardform__select {
+  padding: 12px 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  font-family: var(--font-ui);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23a8a8b0' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.cardform__day-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+/* Group chips in form */
+.cardform__groups {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardform__group-chip {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-raised);
+  transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+.cardform__group-chip.is-active {
+  background: var(--accent, var(--primary));
+  color: #fff;
+}
+
+.cardform__footer {
+  padding: var(--space-4);
+  flex: none;
+  border-top: 1px solid var(--border);
+}
+
+.cardform__save {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  font-family: var(--font-ui);
+  transition: opacity var(--dur) var(--ease-out);
+}
+
+.cardform__save:disabled {
+  opacity: 0.4;
+}
+
+@media (min-width: 520px) {
+  .cardform__body {
+    padding: 0 var(--space-5) var(--space-6);
+  }
+
+  .cardform__header {
+    padding: var(--space-5) var(--space-5) var(--space-3);
+  }
+}

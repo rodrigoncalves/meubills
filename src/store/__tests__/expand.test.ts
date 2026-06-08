@@ -3,9 +3,9 @@ import type { Invoice } from "@/data/types";
 import { expandInstallments, expandRecurrence } from "@/store/expand";
 
 const invoices: Invoice[] = [
-  { id: "inv-nu-jun", cardId: "nu", month: 5, year: 2026, status: "open" },
-  { id: "inv-nu-jul", cardId: "nu", month: 6, year: 2026, status: "open" },
-  { id: "inv-nu-ago", cardId: "nu", month: 7, year: 2026, status: "open" },
+  { id: "inv-nu-jun", cardId: "nu", month: 5, year: 2026, paid: false },
+  { id: "inv-nu-jul", cardId: "nu", month: 6, year: 2026, paid: false },
+  { id: "inv-nu-ago", cardId: "nu", month: 7, year: 2026, paid: false },
 ];
 
 function baseCardTx() {

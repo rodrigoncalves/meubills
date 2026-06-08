@@ -72,7 +72,7 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 200ms;
 
-  /* Layout — use 1024px in @media (custom properties are not valid in @media) */
-  --bp-desktop: 1024px;
+  /* Layout — use 520px in @media (custom properties are not valid in @media) */
+  --bp-desktop: 520px;
   --txform-extra-width: 400px;
 }

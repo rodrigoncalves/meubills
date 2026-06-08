@@ -15,6 +15,7 @@ interface Props {
   year: number;
   onSelectMonth: (month: number, year: number) => void;
   monthLabel: string;
+  onOpenCards?: () => void;
 }
 
 export function DashboardDesktop({
@@ -24,6 +25,7 @@ export function DashboardDesktop({
   year,
   onSelectMonth,
   monthLabel,
+  onOpenCards,
 }: Props) {
   const [visible, setVisible] = useState(true);
   const [groupOpen, setGroupOpen] = useState(false);
@@ -113,11 +115,12 @@ export function DashboardDesktop({
         cards={cards}
         currency={group.currency}
         visible={visible}
+        onOpenCards={onOpenCards}
       />
 
       <div className="dashboard__grid">
         <div className="dashboard__main">
-          <CardsSection cards={cards} currency={group.currency} visible={visible} />
+          <CardsSection cards={cards} currency={group.currency} visible={visible} groupId={groupId} />
         </div>
         <div className="dashboard__aside">
           <Alerts alerts={alerts} currency={group.currency} visible={visible} />

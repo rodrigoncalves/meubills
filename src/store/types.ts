@@ -48,7 +48,32 @@ export interface AdjustBalanceInput {
   description?: string;
 }
 
+export interface NewCreditCardInput {
+  groupId: string;
+  name: string;
+  totalLimit: number;
+  closingDay?: number;
+  dueDay?: number;
+  accountId?: string;
+}
+
+export type CreditCardUpdate = Partial<
+  Pick<CreditCard, "name" | "totalLimit" | "closingDay" | "dueDay" | "accountId" | "archived" | "dateLabel" | "closingLabel" | "dueLabel">
+>;
+
+export interface PayInvoiceInput {
+  invoiceId: string;
+  accountId: string;
+  date: string;
+  amount: number;
+}
+
 export type Action =
   | { kind: "ADD_TRANSACTION"; input: NewTransactionInput }
   | { kind: "ADJUST_BALANCE"; input: AdjustBalanceInput }
-  | { kind: "DELETE_TRANSACTION"; id: string };
+  | { kind: "DELETE_TRANSACTION"; id: string }
+  | { kind: "ADD_CREDIT_CARD"; input: NewCreditCardInput }
+  | { kind: "UPDATE_CREDIT_CARD"; cardId: string; update: CreditCardUpdate }
+  | { kind: "DELETE_CREDIT_CARD"; cardId: string }
+  | { kind: "PAY_INVOICE"; input: PayInvoiceInput }
+  | { kind: "REOPEN_INVOICE"; invoiceId: string };

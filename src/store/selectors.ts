@@ -97,6 +97,19 @@ export function invoiceAmount(state: AppState, invoiceId: string): number {
   return round2(base + delta);
 }
 
+export function cardOpenInvoiceAmount(state: AppState, cardId: string): number {
+  return state.invoices
+    .filter((inv) => inv.cardId === cardId && !inv.paid)
+    .reduce((sum, inv) => sum + invoiceAmount(state, inv.id), 0);
+}
+
+export function cardAvailableLimit(state: AppState, cardId: string): number {
+  const card = state.cards.find((c) => c.id === cardId);
+  if (!card) return 0;
+  const used = cardOpenInvoiceAmount(state, cardId);
+  return round2(Math.max(0, card.totalLimit - used));
+}
+
 export function invoiceLabel(month: number, year: number): string {
   return `Fatura de ${MONTHS_PT[month]} de ${year}`;
 }
@@ -107,8 +120,10 @@ export function cardInvoices(state: AppState, cardId: string) {
     .sort((a, b) => a.year - b.year || a.month - b.month);
 }
 
-export function cardsByGroup(state: AppState, groupId: string) {
-  return state.cards.filter((c) => c.groupId === groupId);
+export function cardsByGroup(state: AppState, groupId: string, includeArchived = false) {
+  return state.cards.filter(
+    (c) => c.groupId === groupId && (includeArchived || !c.archived),
+  );
 }
 
 export function invoiceForMonth(

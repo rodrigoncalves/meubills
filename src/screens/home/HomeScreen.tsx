@@ -13,6 +13,8 @@ interface Props {
   monthLabel: string;
   onOpenGroupSwitcher: () => void;
   onOpenMonthPicker: () => void;
+  onOpenCards?: () => void;
+  onCardTap?: (cardId: string, month: number, year: number) => void;
 }
 
 export function HomeScreen({
@@ -22,6 +24,8 @@ export function HomeScreen({
   monthLabel,
   onOpenGroupSwitcher,
   onOpenMonthPicker,
+  onOpenCards,
+  onCardTap,
 }: Props) {
   const [visible, setVisible] = useState(true);
   const group = resolveGroup(groupId);
@@ -43,7 +47,14 @@ export function HomeScreen({
         onToggleVisible={() => setVisible((v) => !v)}
       />
       <Alerts alerts={alerts} currency={group.currency} visible={visible} />
-      <CardsSection cards={cards} currency={group.currency} visible={visible} />
+      <CardsSection
+        cards={cards}
+        currency={group.currency}
+        visible={visible}
+        groupId={groupId}
+        onOpenCards={onOpenCards}
+        onCardTap={onCardTap}
+      />
     </div>
   );
 }

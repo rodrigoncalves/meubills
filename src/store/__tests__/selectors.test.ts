@@ -3,6 +3,8 @@ import type { Transaction } from "@/data/types";
 import { buildInitialState } from "@/store/reducer";
 import {
   accountBalance,
+  cardAvailableLimit,
+  cardOpenInvoiceAmount,
   cardsByGroup,
   groupTransactions,
   homeBalance,
@@ -140,6 +142,25 @@ describe("cardsByGroup", () => {
     const state = buildInitialState();
     expect(cardsByGroup(state, "unknown")).toEqual([]);
   });
+
+  it("excludes archived cards by default", () => {
+    const state = buildInitialState();
+    const totalPF = cardsByGroup(state, "pf");
+    state.cards = [...state.cards];
+    state.cards[0] = { ...state.cards[0], archived: true };
+    const withoutArchived = cardsByGroup(state, "pf");
+    expect(withoutArchived).toHaveLength(totalPF.length - 1);
+    expect(withoutArchived.every((c) => !c.archived)).toBe(true);
+  });
+
+  it("includes archived cards when includeArchived=true", () => {
+    const state = buildInitialState();
+    const totalPF = cardsByGroup(state, "pf");
+    state.cards = [...state.cards];
+    state.cards[0] = { ...state.cards[0], archived: true };
+    const withArchived = cardsByGroup(state, "pf", true);
+    expect(withArchived).toHaveLength(totalPF.length);
+  });
 });
 
 describe("invoiceForMonth", () => {
@@ -170,5 +191,43 @@ describe("invoiceTransactions", () => {
   it("returns empty array for invoice with no transactions", () => {
     const state = buildInitialState();
     expect(invoiceTransactions(state, "inv-nu-jun")).toEqual([]);
+  });
+});
+
+describe("cardOpenInvoiceAmount", () => {
+  it("sums invoiceAmount for all non-paid invoices of a card", () => {
+    const state = buildInitialState();
+    // Nubank has inv-nu-jun (paid: false) + inv-nu-jul (paid: false)
+    // baseInvoiceAmounts[inv-nu-jun] = 745.01, inv-nu-jul = 890.00
+    const amount = cardOpenInvoiceAmount(state, "nu");
+    expect(amount).toBe(1635.01); // 745.01 + 890.00
+  });
+
+  it("returns 0 for card with no invoices", () => {
+    const state = buildInitialState();
+    const amount = cardOpenInvoiceAmount(state, "nonexistent");
+    expect(amount).toBe(0);
+  });
+});
+
+describe("cardAvailableLimit", () => {
+  it("returns totalLimit minus open invoice amounts, min 0", () => {
+    const state = buildInitialState();
+    // Nubank: totalLimit=3254.99, open invoices = 745.01 + 890.00 = 1635.01
+    const avail = cardAvailableLimit(state, "nu");
+    expect(avail).toBeCloseTo(3254.99 - 1635.01, 2);
+  });
+
+  it("returns 0 when used exceeds totalLimit", () => {
+    const state = buildInitialState();
+    // Will Bank: totalLimit=0, open invoice = 1832.45 → negative clamped to 0
+    const avail = cardAvailableLimit(state, "will");
+    expect(avail).toBe(0);
+  });
+
+  it("returns totalLimit when card has no open invoices", () => {
+    const state = buildInitialState();
+    const avail = cardAvailableLimit(state, "nonexistent");
+    expect(avail).toBe(0); // card not found
   });
 });

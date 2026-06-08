@@ -30,7 +30,7 @@
 }
 
 /* Desktop */
-@media (min-width: 1024px) {
+@media (min-width: 520px) {
   .app-shell {
     display: flex;
     align-items: stretch;

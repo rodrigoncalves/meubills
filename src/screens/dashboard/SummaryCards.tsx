@@ -12,9 +12,18 @@ interface Props {
   cards: CreditCard[];
   currency: Currency;
   visible: boolean;
+  onOpenCards?: () => void;
 }
 
-export function SummaryCards({ groupId, month, year, cards, currency, visible }: Props) {
+export function SummaryCards({
+  groupId,
+  month,
+  year,
+  cards,
+  currency,
+  visible,
+  onOpenCards,
+}: Props) {
   const state = useAppState();
   const balance = homeBalance(state, groupId);
   const income = monthIncome(state, groupId, month, year);
@@ -45,22 +54,47 @@ export function SummaryCards({ groupId, month, year, cards, currency, visible }:
       icon: <CardIcon size={26} />,
       label: "Cartões de crédito",
       value: maskMoney(visible, cardsTotal, currency),
+      onClick: onOpenCards,
     },
   ];
 
   return (
     <div className="summary-cards">
-      {items.map((it) => (
-        <div key={it.label} className="summary-card">
-          <span className={`summary-card__icon summary-card__icon--${it.tone}`}>{it.icon}</span>
-          <span className="summary-card__text">
-            <span className="summary-card__label">{it.label}</span>
-            <span className={`summary-card__value summary-card__value--${it.tone} tnum`}>
-              {it.value}
+      {items.map((it) => {
+        const className = `summary-card${it.onClick ? " summary-card--action" : ""}`;
+
+        if (it.onClick) {
+          return (
+            <button
+              key={it.label}
+              type="button"
+              className={className}
+              onClick={it.onClick}
+              aria-label={`${it.label}: ${it.value}`}
+            >
+              <span className={`summary-card__icon summary-card__icon--${it.tone}`}>{it.icon}</span>
+              <span className="summary-card__text">
+                <span className="summary-card__label">{it.label}</span>
+                <span className={`summary-card__value summary-card__value--${it.tone} tnum`}>
+                  {it.value}
+                </span>
+              </span>
+            </button>
+          );
+        }
+
+        return (
+          <div key={it.label} className={className}>
+            <span className={`summary-card__icon summary-card__icon--${it.tone}`}>{it.icon}</span>
+            <span className="summary-card__text">
+              <span className="summary-card__label">{it.label}</span>
+              <span className={`summary-card__value summary-card__value--${it.tone} tnum`}>
+                {it.value}
+              </span>
             </span>
-          </span>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

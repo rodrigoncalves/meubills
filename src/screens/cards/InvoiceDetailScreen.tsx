@@ -3,6 +3,7 @@ import { CardIcon, ChevronLeftIcon, ChevronRightIcon, TagIcon, TrashIcon } from 
 import { PickerSheet } from "@/components/PickerSheet";
 import { resolveGroup } from "@/data/mock";
 import { MONTHS_LONG } from "@/components/MonthPicker";
+import { getInvoiceStatus, isInvoiceOverdue } from "@/lib/card-utils";
 import type { Category, Transaction } from "@/data/types";
 import { formatMoney } from "@/lib/format";
 import { useAppDispatch, useAppState } from "@/store/AppStateProvider";
@@ -25,8 +26,8 @@ type SortCol = "date" | "description" | "category" | "amount";
 
 const STATUS_LABELS: Record<string, string> = {
   open: "Fatura aberta",
-  "closed-pending": "Fatura fechada",
-  "closed-paid": "Fatura paga",
+  closed: "Fatura fechada",
+  paid: "Fatura paga",
 };
 
 const WEEKDAYS_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -104,7 +105,15 @@ export function InvoiceDetailScreen({ cardId, month, year, onBack, onAddCardExpe
   const invoice = invoiceForMonth(state, currentCardId, curMonth, curYear);
   const rawTxs = invoice ? invoiceTransactions(state, invoice.id) : [];
   const liveAmount = invoice ? invoiceAmount(state, invoice.id) : 0;
-  const statusLabel = invoice ? (STATUS_LABELS[invoice.status] ?? "—") : "Sem fatura";
+  const statusLabel = invoice
+    ? (() => {
+        const status = getInvoiceStatus(invoice, card.closingDay ?? 31);
+        if (status === "open" && isInvoiceOverdue(invoice, card.closingDay ?? 31, card.dueDay ?? 1)) {
+          return "Fatura vencida";
+        }
+        return STATUS_LABELS[status] ?? "—";
+      })()
+    : "Sem fatura";
 
   const monthLabel = `${MONTHS_LONG[curMonth]}`;
 

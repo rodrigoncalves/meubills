@@ -36,6 +36,13 @@ export function App() {
   const [formType, setFormType] = useState<TransactionType>("despesa");
   const [formCardId, setFormCardId] = useState<string | undefined>(undefined);
 
+  const [cardNavDetail, setCardNavDetail] = useState<{ cardId: string; month: number; year: number } | undefined>(undefined);
+
+  const handleCardTap = (cardId: string, month: number, year: number) => {
+    setCardNavDetail({ cardId, month, year });
+    setTab("cartoes");
+  };
+
   const monthLabel = MONTHS_LONG[month];
 
   const handleNewAction = (action: NewAction) => {
@@ -78,6 +85,8 @@ export function App() {
               monthLabel={monthLabel}
               onOpenGroupSwitcher={() => setGroupSheetOpen(true)}
               onOpenMonthPicker={() => setMonthSheetOpen(true)}
+              onOpenCards={() => { setCardNavDetail(undefined); setTab("cartoes"); }}
+              onCardTap={handleCardTap}
             />
           ) : tab === "transacoes" ? (
             <TransactionsScreen
@@ -90,6 +99,7 @@ export function App() {
             <CardsScreen
               activeGroupId={groupId}
               onAddCardExpense={handleAddCardExpense}
+              initialDetail={cardNavDetail}
             />
           ) : tab === "mais" ? (
             <AccountsScreen />
@@ -121,6 +131,7 @@ export function App() {
               year={year}
               onSelectMonth={handleSelectMonth}
               monthLabel={monthLabel}
+              onOpenCards={() => setDesktopView("cards")}
             />
           )}
         </div>

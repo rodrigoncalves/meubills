@@ -8,6 +8,16 @@
   justify-content: space-between;
 }
 
+.cards__title-btn {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .cards__panel {
   background: var(--surface-card);
   border-radius: var(--radius-card);
@@ -90,16 +100,37 @@
 .card-row__name {
   font-size: 15px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-row__overdue-badge {
+  display: inline-block;
+  margin-left: var(--space-2);
+  color: var(--warning);
+  font-size: var(--fs-data-label);
+  flex: none;
+  white-space: nowrap;
 }
 
 .card-row__date {
   font-size: var(--fs-data-label);
   color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .card-row__limit {
   font-size: var(--fs-data-label);
   color: var(--text-muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .card-row__amount {
@@ -141,6 +172,14 @@
   white-space: nowrap;
 }
 
+/* Empty state */
+.cards__empty {
+  padding: var(--space-6) 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-label);
+}
+
 /* Total */
 .cards__total {
   display: flex;
@@ -156,4 +195,28 @@
 .cards__total .tnum {
   font-size: 16px;
   color: var(--text-primary);
+}
+
+@media (max-width: 380px) {
+  .card-row {
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-1);
+  }
+
+  .card-row__main {
+    gap: var(--space-2);
+  }
+
+  .card-row__icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .card-row__name {
+    font-size: 14px;
+  }
+
+  .card-row__amount {
+    font-size: 14px;
+  }
 }

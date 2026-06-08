@@ -1,6 +1,7 @@
 import {
   ADJUST_EXPENSE_CATEGORY,
   ADJUST_INCOME_CATEGORY,
+  DEFAULT_EXPENSE_CATEGORY,
   baseInvoiceAmounts,
   baseSummaryByGroup,
   accounts as seedAccounts,
@@ -11,6 +12,7 @@ import {
 } from "@/data/mock";
 import type { Transaction } from "@/data/types";
 import { expandInstallments, expandRecurrence } from "@/store/expand";
+import { formatClosingLabel, formatDateLabel, formatDueLabel, generateInvoices } from "@/lib/card-utils";
 import { accountBalance } from "@/store/selectors";
 import type { Action, AppState, NewTransactionInput } from "@/store/types";
 
@@ -94,6 +96,98 @@ export function appReducer(state: AppState, action: Action): AppState {
         ...state,
         transactions: state.transactions.filter((t) => t.id !== action.id),
       };
+    case "ADD_CREDIT_CARD": {
+      const id = nextId("card");
+      const today = new Date();
+      const card = {
+        id,
+        groupId: action.input.groupId,
+        name: action.input.name,
+        totalLimit: action.input.totalLimit,
+        invoiceAmount: 0,
+        dateLabel: action.input.closingDay ? formatDateLabel(action.input.closingDay) : "",
+        closingLabel: action.input.closingDay ? formatClosingLabel(action.input.closingDay) : undefined,
+        dueLabel: action.input.dueDay ? formatDueLabel(action.input.dueDay) : undefined,
+        closingDay: action.input.closingDay,
+        dueDay: action.input.dueDay,
+        accountId: action.input.accountId,
+      };
+      const invoices = generateInvoices(id, today.getMonth(), today.getFullYear(), 6);
+      return {
+        ...state,
+        cards: [...state.cards, card],
+        invoices: [...state.invoices, ...invoices],
+      };
+    }
+    case "UPDATE_CREDIT_CARD": {
+      return {
+        ...state,
+        cards: state.cards.map((c) =>
+          c.id === action.cardId ? { ...c, ...action.update } : c,
+        ),
+      };
+    }
+    case "PAY_INVOICE": {
+      const { invoiceId, accountId, date, amount } = action.input;
+      const invoice = state.invoices.find((inv) => inv.id === invoiceId);
+      if (!invoice || invoice.paid) return state;
+      const txId = nextId("pay");
+      const payment: Transaction = {
+        id: txId,
+        type: "despesa",
+        amount,
+        groupId: state.cards.find((c) => c.id === invoice.cardId)?.groupId ?? "pf",
+        date,
+        description: "Pagamento de fatura",
+        categoryId: DEFAULT_EXPENSE_CATEGORY,
+        accountId,
+        settled: true,
+        ignored: false,
+        recurrence: "none",
+        createdAt: new Date().toISOString(),
+      };
+      return {
+        ...state,
+        transactions: [...state.transactions, payment],
+        invoices: state.invoices.map((inv) =>
+          inv.id === invoiceId
+            ? { ...inv, paid: true, paymentTransactionId: txId }
+            : inv,
+        ),
+      };
+    }
+    case "REOPEN_INVOICE": {
+      const inv = state.invoices.find((i) => i.id === action.invoiceId);
+      if (!inv || !inv.paid || !inv.paymentTransactionId) return state;
+      return {
+        ...state,
+        transactions: state.transactions.filter(
+          (t) => t.id !== inv.paymentTransactionId,
+        ),
+        invoices: state.invoices.map((i) =>
+          i.id === action.invoiceId
+            ? { ...i, paid: false, paymentTransactionId: undefined }
+            : i,
+        ),
+      };
+    }
+    case "DELETE_CREDIT_CARD": {
+      const { cardId } = action;
+      const invoiceIds = state.invoices
+        .filter((inv) => inv.cardId === cardId)
+        .map((inv) => inv.id);
+      const updatedBase = { ...state.baseInvoiceAmounts };
+      for (const invId of invoiceIds) {
+        delete updatedBase[invId];
+      }
+      return {
+        ...state,
+        cards: state.cards.filter((c) => c.id !== cardId),
+        invoices: state.invoices.filter((inv) => inv.cardId !== cardId),
+        transactions: state.transactions.filter((t) => t.cardId !== cardId),
+        baseInvoiceAmounts: updatedBase,
+      };
+    }
     default:
       return state;
   }

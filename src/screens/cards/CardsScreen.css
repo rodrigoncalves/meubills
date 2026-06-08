@@ -39,6 +39,25 @@
   color: #fff;
 }
 
+/* Create card button */
+.cards-screen__create {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  color: #fff;
+  background: var(--primary);
+  transition: opacity var(--dur) var(--ease-out);
+  align-self: flex-start;
+}
+
+.cards-screen__create:hover {
+  opacity: 0.85;
+}
+
 /* Segmented control (reuse existing .seg / .seg__btn from CardsSection.css
    which are global — just namespace the panel here) */
 .cards-screen__panel {
@@ -59,21 +78,63 @@
   padding: 0;
 }
 
-/* Total row */
-.cards-screen__total {
+/* Summary boxes */
+.cards-screen__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.cards-screen__body .cards-screen__panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.cards-screen__summaries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  flex: none;
+}
+
+.cards-screen__summary-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-1) var(--space-1);
+  background: var(--surface-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4) var(--space-5);
+}
+
+.cards-screen__summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cards-screen__summary-label {
   font-size: var(--fs-label);
-  font-weight: 700;
-  letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
 
-.cards-screen__total .tnum {
-  font-size: 16px;
+.cards-screen__summary-value {
+  font-size: 22px;
+  font-weight: 700;
   color: var(--text-primary);
+}
+
+.cards-screen__summary-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  flex: none;
 }
 
 /* Empty state */
@@ -84,9 +145,178 @@
   font-size: var(--fs-label);
 }
 
-@media (min-width: 1024px) {
+/* Card row action area */
+.card-row__actions-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: none;
+}
+
+.card-row__more {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition: color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+
+.card-row__more:hover {
+  color: var(--text-primary);
+  background: var(--surface-raised);
+}
+
+/* Dropdown anchor */
+.card-row__more-wrap {
+  position: relative;
+}
+
+/* Dropdown backdrop */
+.card-row__popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: transparent;
+}
+
+/* Dropdown popover */
+.card-row__popover {
+  position: absolute;
+  z-index: 41;
+  right: 0;
+  top: calc(100% + 4px);
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  min-width: 180px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  animation: popover-in var(--dur) var(--ease-out);
+}
+
+@keyframes popover-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-menu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease-out);
+}
+
+.card-menu__item:hover {
+  background: var(--surface-raised);
+}
+
+.card-menu__item--danger {
+  color: var(--expense);
+}
+
+/* Header actions row */
+.cards-screen__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cards-screen__show-archived {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 8px 0;
+  transition: color var(--dur) var(--ease-out);
+}
+
+.cards-screen__show-archived:hover {
+  color: var(--text-secondary);
+}
+
+/* Archived view header */
+.cards-screen__header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cards-screen__back {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  flex: none;
+}
+
+.card-row--archived {
+  opacity: 0.65;
+}
+
+.card-row__restore {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  flex: none;
+  font-family: var(--font-ui);
+}
+
+@media (min-width: 520px) {
   .cards-screen {
     padding: var(--space-7) var(--space-8);
-    max-width: 720px;
+    max-width: 1100px;
+  }
+}
+
+/* Row layout when sidebar collapsed (76px) */
+@media (min-width: 768px) {
+  .app-shell:not(:has(.sidebar.is-expanded)) .cards-screen__body {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .app-shell:not(:has(.sidebar.is-expanded)) .cards-screen__summaries {
+    width: 260px;
+    order: 2;
+  }
+
+  .app-shell:not(:has(.sidebar.is-expanded)) .cards-screen__panel {
+    order: 1;
+  }
+}
+
+/* Row layout when sidebar expanded (248px) — need wider viewport */
+@media (min-width: 900px) {
+  .app-shell:has(.sidebar.is-expanded) .cards-screen__body {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .app-shell:has(.sidebar.is-expanded) .cards-screen__summaries {
+    width: 260px;
+    order: 2;
+  }
+
+  .app-shell:has(.sidebar.is-expanded) .cards-screen__panel {
+    order: 1;
   }
 }

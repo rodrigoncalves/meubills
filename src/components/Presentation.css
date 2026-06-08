@@ -23,13 +23,13 @@
   overflow-y: auto;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 520px) {
   .presentation {
     align-items: center;
     justify-content: center;
   }
   .presentation__panel {
-    width: 480px;
+    width: 520px;
     max-width: calc(100vw - 48px);
     height: auto;
     max-height: calc(100vh - 64px);

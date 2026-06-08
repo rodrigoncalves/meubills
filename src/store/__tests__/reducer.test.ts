@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ADJUST_INCOME_CATEGORY } from "@/data/mock";
 import { appReducer, buildInitialState } from "@/store/reducer";
-import type { NewTransactionInput } from "@/store/types";
+import type { NewCreditCardInput, NewTransactionInput } from "@/store/types";
 
 function baseExpense(): NewTransactionInput {
   return {
@@ -84,5 +84,221 @@ describe("appReducer DELETE_TRANSACTION", () => {
     const final = appReducer(s2, { kind: "DELETE_TRANSACTION", id: idToDelete });
     expect(final.transactions).toHaveLength(s1.transactions.length);
     expect(final.transactions.find((t) => t.id === idToDelete)).toBeUndefined();
+  });
+});
+
+function baseCard(): NewCreditCardInput {
+  return {
+    groupId: "pf",
+    name: "Test Card",
+    totalLimit: 5000,
+    closingDay: 15,
+    dueDay: 25,
+  };
+}
+
+describe("appReducer ADD_CREDIT_CARD", () => {
+  it("adds a card and generates 6 invoices", () => {
+    const state = buildInitialState();
+    const next = appReducer(state, { kind: "ADD_CREDIT_CARD", input: baseCard() });
+    expect(next.cards).toHaveLength(state.cards.length + 1);
+    const card = next.cards.find((c) => c.name === "Test Card");
+    expect(card).toBeDefined();
+    expect(card!.groupId).toBe("pf");
+    expect(card!.totalLimit).toBe(5000);
+    expect(card!.invoiceAmount).toBe(0);
+    expect(card!.closingDay).toBe(15);
+    expect(card!.dueDay).toBe(25);
+    // 6 invoices generated
+    const cardInvoices = next.invoices.filter((inv) => inv.cardId === card!.id);
+    expect(cardInvoices).toHaveLength(6);
+    expect(cardInvoices[0].paid).toBe(false);
+  });
+
+  it("computes date labels from closingDay/dueDay", () => {
+    const state = buildInitialState();
+    const next = appReducer(state, { kind: "ADD_CREDIT_CARD", input: baseCard() });
+    const card = next.cards.find((c) => c.name === "Test Card")!;
+    expect(card.dateLabel).toBeTruthy();
+    expect(card.closingLabel).toBeTruthy();
+    expect(card.dueLabel).toBeTruthy();
+  });
+
+  it("handles missing closingDay/dueDay gracefully", () => {
+    const state = buildInitialState();
+    const next = appReducer(state, {
+      kind: "ADD_CREDIT_CARD",
+      input: { groupId: "pf", name: "Simple", totalLimit: 1000 },
+    });
+    const card = next.cards.find((c) => c.name === "Simple")!;
+    expect(card.dateLabel).toBe("");
+    expect(card.closingLabel).toBeUndefined();
+    expect(card.dueLabel).toBeUndefined();
+  });
+});
+
+describe("appReducer UPDATE_CREDIT_CARD", () => {
+  it("updates card name", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const next = appReducer(state, {
+      kind: "UPDATE_CREDIT_CARD",
+      cardId,
+      update: { name: "Renamed" },
+    });
+    expect(next.cards.find((c) => c.id === cardId)?.name).toBe("Renamed");
+  });
+
+  it("updates totalLimit", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const next = appReducer(state, {
+      kind: "UPDATE_CREDIT_CARD",
+      cardId,
+      update: { totalLimit: 9999 },
+    });
+    expect(next.cards.find((c) => c.id === cardId)?.totalLimit).toBe(9999);
+  });
+
+  it("sets archived flag", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const next = appReducer(state, {
+      kind: "UPDATE_CREDIT_CARD",
+      cardId,
+      update: { archived: true },
+    });
+    expect(next.cards.find((c) => c.id === cardId)?.archived).toBe(true);
+  });
+
+  it("links an account", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const next = appReducer(state, {
+      kind: "UPDATE_CREDIT_CARD",
+      cardId,
+      update: { accountId: "pf-cc" },
+    });
+    expect(next.cards.find((c) => c.id === cardId)?.accountId).toBe("pf-cc");
+  });
+
+  it("does not affect other cards", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const otherId = state.cards[1].id;
+    const next = appReducer(state, {
+      kind: "UPDATE_CREDIT_CARD",
+      cardId,
+      update: { name: "Changed" },
+    });
+    expect(next.cards.find((c) => c.id === otherId)?.name).toBe(state.cards[1].name);
+  });
+});
+
+describe("appReducer DELETE_CREDIT_CARD", () => {
+  it("removes the card", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const next = appReducer(state, { kind: "DELETE_CREDIT_CARD", cardId });
+    expect(next.cards.find((c) => c.id === cardId)).toBeUndefined();
+    expect(next.cards).toHaveLength(state.cards.length - 1);
+  });
+
+  it("removes linked invoices", () => {
+    const state = buildInitialState();
+    const cardId = "nu"; // has invoices inv-nu-jun, inv-nu-jul
+    const next = appReducer(state, { kind: "DELETE_CREDIT_CARD", cardId });
+    const remaining = next.invoices.filter((inv) => inv.cardId === cardId);
+    expect(remaining).toHaveLength(0);
+  });
+
+  it("removes baseInvoiceAmounts entries for deleted invoices", () => {
+    const state = buildInitialState();
+    const cardId = "nu";
+    const next = appReducer(state, { kind: "DELETE_CREDIT_CARD", cardId });
+    expect(next.baseInvoiceAmounts["inv-nu-jun"]).toBeUndefined();
+  });
+
+  it("removes linked transactions", () => {
+    const state = buildInitialState();
+    state.transactions = [
+      {
+        id: "tx1",
+        type: "despesa-cartao",
+        amount: 100,
+        groupId: "pf",
+        date: "2026-06-01",
+        cardId: "nu",
+        invoiceId: "inv-nu-jun",
+        settled: true,
+        ignored: false,
+        recurrence: "none",
+        createdAt: "2026-06-01T00:00:00.000Z",
+      },
+    ];
+    const next = appReducer(state, { kind: "DELETE_CREDIT_CARD", cardId: "nu" });
+    expect(next.transactions).toHaveLength(0);
+  });
+
+  it("leaves other data intact", () => {
+    const state = buildInitialState();
+    const cardId = state.cards[0].id;
+    const next = appReducer(state, { kind: "DELETE_CREDIT_CARD", cardId });
+    expect(next.groups).toEqual(state.groups);
+    expect(next.accounts).toEqual(state.accounts);
+    expect(next.categories).toEqual(state.categories);
+    expect(next.baseSummaryByGroup).toEqual(state.baseSummaryByGroup);
+  });
+});
+
+describe("appReducer PAY_INVOICE", () => {
+  it("creates a payment transaction and marks invoice as paid", () => {
+    const state = buildInitialState();
+    const next = appReducer(state, {
+      kind: "PAY_INVOICE",
+      input: { invoiceId: "inv-nu-jun", accountId: "pf-cc", date: "2026-06-04", amount: 745.01 },
+    });
+    const inv = next.invoices.find((i) => i.id === "inv-nu-jun");
+    expect(inv?.paid).toBe(true);
+    expect(inv?.paymentTransactionId).toBeDefined();
+    const paymentTx = next.transactions.find((t) => t.id === inv!.paymentTransactionId);
+    expect(paymentTx).toBeDefined();
+    expect(paymentTx!.type).toBe("despesa");
+    expect(paymentTx!.amount).toBe(745.01);
+    expect(paymentTx!.accountId).toBe("pf-cc");
+  });
+
+  it("does nothing if invoice already paid", () => {
+    const state = buildInitialState();
+    const s1 = appReducer(state, {
+      kind: "PAY_INVOICE",
+      input: { invoiceId: "inv-nu-jun", accountId: "pf-cc", date: "2026-06-04", amount: 745.01 },
+    });
+    const s2 = appReducer(s1, {
+      kind: "PAY_INVOICE",
+      input: { invoiceId: "inv-nu-jun", accountId: "pf-cc", date: "2026-06-05", amount: 745.01 },
+    });
+    expect(s2.transactions).toHaveLength(s1.transactions.length);
+  });
+});
+
+describe("appReducer REOPEN_INVOICE", () => {
+  it("reverses payment and marks invoice as unpaid", () => {
+    const state = buildInitialState();
+    const paid = appReducer(state, {
+      kind: "PAY_INVOICE",
+      input: { invoiceId: "inv-nu-jun", accountId: "pf-cc", date: "2026-06-04", amount: 745.01 },
+    });
+    const reopened = appReducer(paid, { kind: "REOPEN_INVOICE", invoiceId: "inv-nu-jun" });
+    const inv = reopened.invoices.find((i) => i.id === "inv-nu-jun");
+    expect(inv?.paid).toBe(false);
+    expect(inv?.paymentTransactionId).toBeUndefined();
+    expect(reopened.transactions).toHaveLength(state.transactions.length);
+  });
+
+  it("does nothing if invoice not paid", () => {
+    const state = buildInitialState();
+    const next = appReducer(state, { kind: "REOPEN_INVOICE", invoiceId: "inv-nu-jun" });
+    expect(next).toEqual(state);
   });
 });

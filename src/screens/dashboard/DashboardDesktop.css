@@ -127,9 +127,35 @@
 
 .dashboard__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--space-6);
   align-items: start;
+}
+
+.dashboard__aside {
+  order: -1;
+}
+
+/* 2 columns when sidebar collapsed (76px) */
+@media (min-width: 900px) {
+  .app-shell:not(:has(.sidebar.is-expanded)) .dashboard__grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+
+  .app-shell:not(:has(.sidebar.is-expanded)) .dashboard__aside {
+    order: 0;
+  }
+}
+
+/* 2 columns when sidebar expanded (248px) */
+@media (min-width: 1100px) {
+  .app-shell:has(.sidebar.is-expanded) .dashboard__grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+
+  .app-shell:has(.sidebar.is-expanded) .dashboard__aside {
+    order: 0;
+  }
 }
 
 /* Reuse mobile sections without their screen padding */

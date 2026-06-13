@@ -247,6 +247,18 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
     });
   }, [open, type, cardId, invoices]);
 
+  // Keep the selected category in sync with the type's kind: a despesa must use
+  // an expense category and a receita an income category. Resets to the first
+  // matching category when the current selection belongs to the other kind.
+  useEffect(() => {
+    if (!open || type === "transferencia") return;
+    const kind = type === "receita" ? "income" : "expense";
+    setCategoryId((current) => {
+      if (state.categories.some((c) => c.id === current && c.kind === kind)) return current;
+      return state.categories.find((c) => c.kind === kind)?.id ?? "";
+    });
+  }, [open, type, state.categories]);
+
   // Init on open. Declared after the auto-default effects above so its values
   // win the initial commit; later commits keep valid prefilled selections.
   useEffect(() => {

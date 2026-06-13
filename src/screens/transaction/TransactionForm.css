@@ -640,6 +640,85 @@
   background: var(--income-soft);
 }
 
+.txform__toggle.txform__toggle--on.txform__toggle--despesa-cartao {
+  background: var(--credit);
+}
+
+.txform__toggle.txform__toggle--on.txform__toggle--transferencia {
+  background: var(--info);
+}
+
+/* ---- SERIES SCOPE (edit of a repeated transaction) ---- */
+
+.txform__series {
+  padding: 8px 20px 4px;
+}
+
+.txform__series-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.txform__series-sub {
+  margin: 2px 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.txform__series-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.txform__radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: color 120ms;
+}
+
+.txform__radio.is-active {
+  color: var(--text-primary);
+}
+
+.txform__radio-dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--text-muted);
+  transition: border-color 120ms;
+}
+
+.txform__radio.is-active .txform__radio-dot {
+  border-color: var(--expense);
+}
+
+.txform__radio.is-active .txform__radio-dot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--expense);
+  transform: translate(-50%, -50%);
+}
+
 /* ---- MORE DETAILS ---- */
 
 .txform__more-wrap {

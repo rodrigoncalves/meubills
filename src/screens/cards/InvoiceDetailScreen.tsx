@@ -20,6 +20,7 @@ interface Props {
   year: number;
   onBack: () => void;
   onAddCardExpense: (cardId: string) => void;
+  onEditTransaction?: (tx: Transaction) => void;
 }
 
 type SortCol = "date" | "description" | "category" | "amount";
@@ -88,7 +89,7 @@ function sortedTxs(
   });
 }
 
-export function InvoiceDetailScreen({ cardId, month, year, onBack, onAddCardExpense: _onAddCardExpense }: Props) {
+export function InvoiceDetailScreen({ cardId, month, year, onBack, onAddCardExpense: _onAddCardExpense, onEditTransaction }: Props) {
   const state = useAppState();
   const dispatch = useAppDispatch();
 
@@ -256,6 +257,7 @@ export function InvoiceDetailScreen({ cardId, month, year, onBack, onAddCardExpe
                     categories={state.categories}
                     currency={group.currency}
                     onDelete={handleDelete}
+                    onEdit={onEditTransaction}
                   />
                 ))}
               </div>
@@ -286,7 +288,11 @@ export function InvoiceDetailScreen({ cardId, month, year, onBack, onAddCardExpe
                   const dateFormatted = `${d}/${m}/${y}`;
                   const desc = (tx.description ?? "—") + installmentText(tx);
                   return (
-                    <tr key={tx.id}>
+                    <tr
+                      key={tx.id}
+                      className={onEditTransaction ? "is-tappable" : undefined}
+                      onClick={onEditTransaction ? () => onEditTransaction(tx) : undefined}
+                    >
                       <td>
                         <span
                           style={{
@@ -315,7 +321,10 @@ export function InvoiceDetailScreen({ cardId, month, year, onBack, onAddCardExpe
                           type="button"
                           className="invoice-detail__table-del"
                           aria-label="Excluir transação"
-                          onClick={() => handleDelete(tx.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(tx.id);
+                          }}
                         >
                           <TrashIcon size={16} />
                         </button>
@@ -382,18 +391,20 @@ function TxRow({
   categories,
   currency,
   onDelete,
+  onEdit,
 }: {
   tx: Transaction;
   cardName: string;
   categories: Category[];
   currency: string;
   onDelete: (id: string) => void;
+  onEdit?: (tx: Transaction) => void;
 }) {
   const cat = categories.find((c) => c.id === tx.categoryId);
   const desc = (tx.description ?? "—") + installmentText(tx);
 
   return (
-    <div className="tx-row">
+    <div className={`tx-row${onEdit ? " tx-row--tappable" : ""}`}>
       <div
         className="tx-row__icon"
         style={{ background: cat?.color ?? "var(--text-muted)" }}
@@ -401,7 +412,22 @@ function TxRow({
       >
         <TagIcon size={18} />
       </div>
-      <div className="tx-row__body">
+      <div
+        className="tx-row__body"
+        role={onEdit ? "button" : undefined}
+        tabIndex={onEdit ? 0 : undefined}
+        onClick={onEdit ? () => onEdit(tx) : undefined}
+        onKeyDown={
+          onEdit
+            ? (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onEdit(tx);
+                }
+              }
+            : undefined
+        }
+      >
         <div className="tx-row__desc">{desc}</div>
         <div className="tx-row__sub">
           {cat?.name ?? "—"} | {cardName}

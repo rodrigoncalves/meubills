@@ -87,6 +87,111 @@ describe("appReducer DELETE_TRANSACTION", () => {
   });
 });
 
+describe("appReducer UPDATE_TRANSACTION", () => {
+  // 12 monthly occurrences sharing a seriesId, dates 2026-06-10 .. 2027-05-10.
+  function withSeries() {
+    const state = buildInitialState();
+    const next = appReducer(state, {
+      kind: "ADD_TRANSACTION",
+      input: { ...baseExpense(), recurrence: "monthly" },
+    });
+    const series = next.transactions;
+    return { state: next, series };
+  }
+
+  it("scope 'one' on a standalone transaction updates its fields", () => {
+    const state = buildInitialState();
+    const added = appReducer(state, { kind: "ADD_TRANSACTION", input: baseExpense() });
+    const id = added.transactions.at(-1)!.id;
+    const next = appReducer(added, {
+      kind: "UPDATE_TRANSACTION",
+      id,
+      scope: "one",
+      update: { amount: 123, date: "2026-06-15", description: "Novo", settled: false, ignored: false },
+    });
+    const tx = next.transactions.find((t) => t.id === id)!;
+    expect(tx.amount).toBe(123);
+    expect(tx.date).toBe("2026-06-15");
+    expect(tx.description).toBe("Novo");
+    expect(tx.settled).toBe(false);
+  });
+
+  it("scope 'one' on a series member touches only that occurrence", () => {
+    const { state, series } = withSeries();
+    const target = series[5];
+    const next = appReducer(state, {
+      kind: "UPDATE_TRANSACTION",
+      id: target.id,
+      scope: "one",
+      update: { amount: 99, date: target.date, settled: target.settled, ignored: false },
+    });
+    expect(next.transactions.find((t) => t.id === target.id)!.amount).toBe(99);
+    const others = next.transactions.filter((t) => t.id !== target.id);
+    expect(others.every((t) => t.amount === 50)).toBe(true);
+  });
+
+  it("scope 'future' updates the target and later occurrences only", () => {
+    const { state, series } = withSeries();
+    const target = series[5]; // 2026-11-10
+    const next = appReducer(state, {
+      kind: "UPDATE_TRANSACTION",
+      id: target.id,
+      scope: "future",
+      update: { amount: 99, date: target.date, settled: target.settled, ignored: false },
+    });
+    for (const orig of series) {
+      const t = next.transactions.find((x) => x.id === orig.id)!;
+      expect(t.amount).toBe(orig.date >= target.date ? 99 : 50);
+    }
+  });
+
+  it("scope 'all' updates every occurrence in the series", () => {
+    const { state, series } = withSeries();
+    const target = series[5];
+    const next = appReducer(state, {
+      kind: "UPDATE_TRANSACTION",
+      id: target.id,
+      scope: "all",
+      update: { amount: 99, date: target.date, settled: target.settled, ignored: false },
+    });
+    expect(next.transactions.every((t) => t.amount === 99)).toBe(true);
+  });
+
+  it("does not propagate date or settled to other occurrences", () => {
+    const { state, series } = withSeries();
+    const target = series[5];
+    const next = appReducer(state, {
+      kind: "UPDATE_TRANSACTION",
+      id: target.id,
+      scope: "all",
+      update: { amount: 99, date: "2030-01-01", settled: false, ignored: false },
+    });
+    // target picks up the new date + settled
+    const updatedTarget = next.transactions.find((t) => t.id === target.id)!;
+    expect(updatedTarget.date).toBe("2030-01-01");
+    expect(updatedTarget.settled).toBe(false);
+    // others keep their own date/settled but get the new amount
+    for (const orig of series) {
+      if (orig.id === target.id) continue;
+      const t = next.transactions.find((x) => x.id === orig.id)!;
+      expect(t.date).toBe(orig.date);
+      expect(t.settled).toBe(orig.settled);
+      expect(t.amount).toBe(99);
+    }
+  });
+
+  it("returns state unchanged when id not found", () => {
+    const state = buildInitialState();
+    const next = appReducer(state, {
+      kind: "UPDATE_TRANSACTION",
+      id: "missing",
+      scope: "all",
+      update: { amount: 1, date: "2026-06-10", settled: true, ignored: false },
+    });
+    expect(next).toBe(state);
+  });
+});
+
 function baseCard(): NewCreditCardInput {
   return {
     groupId: "pf",

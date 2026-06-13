@@ -200,6 +200,17 @@
   min-width: 0;
 }
 
+.tx-row--tappable .tx-row__body {
+  cursor: pointer;
+  border-radius: 8px;
+  outline: none;
+}
+
+.tx-row--tappable .tx-row__body:focus-visible {
+  outline: 2px solid var(--credit);
+  outline-offset: 2px;
+}
+
 .tx-row__desc {
   font-size: var(--fs-body);
   font-weight: 600;
@@ -376,6 +387,15 @@
     color: var(--text-primary);
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
+  }
+
+  .invoice-detail__table tr.is-tappable {
+    cursor: pointer;
+    transition: background var(--dur) var(--ease-out);
+  }
+
+  .invoice-detail__table tr.is-tappable:hover {
+    background: var(--surface-raised);
   }
 
   .invoice-detail__table td:nth-child(5) {

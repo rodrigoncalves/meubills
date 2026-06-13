@@ -55,6 +55,46 @@ export function appReducer(state: AppState, action: Action): AppState {
       const tx = materialize(action.input);
       return { ...state, transactions: [...state.transactions, ...expand(tx, state)] };
     }
+    case "UPDATE_TRANSACTION": {
+      const { id, update, scope } = action;
+      const target = state.transactions.find((t) => t.id === id);
+      if (!target) return state;
+
+      // Fields propagated to OTHER occurrences of the series.
+      // date and settled stay per-occurrence; they only change on the target.
+      const template = {
+        amount: update.amount,
+        description: update.description,
+        categoryId: update.categoryId,
+        accountId: update.accountId,
+        fromAccountId: update.fromAccountId,
+        toAccountId: update.toAccountId,
+        ignored: update.ignored,
+      };
+
+      // Single-occurrence edit (no series, or "one" chosen): apply everything.
+      if (scope === "one" || !target.seriesId) {
+        return {
+          ...state,
+          transactions: state.transactions.map((t) =>
+            t.id === id ? { ...t, ...update } : t,
+          ),
+        };
+      }
+
+      const { seriesId } = target;
+      const boundary = target.date; // original date — "future" = this one and later
+
+      return {
+        ...state,
+        transactions: state.transactions.map((t) => {
+          if (t.seriesId !== seriesId) return t;
+          if (t.id === id) return { ...t, ...update };
+          if (scope === "future" && t.date < boundary) return t;
+          return { ...t, ...template };
+        }),
+      };
+    }
     case "ADJUST_BALANCE": {
       const { accountId, targetBalance, mode, description } = action.input;
       const current = accountBalance(state, accountId);

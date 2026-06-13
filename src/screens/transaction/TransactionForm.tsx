@@ -20,11 +20,11 @@ import {
 import { Presentation } from "@/components/Presentation";
 import { useToast } from "@/components/Toast";
 import { DEFAULT_EXPENSE_CATEGORY, resolveGroup } from "@/data/mock";
-import type { Category, TransactionType } from "@/data/types";
+import type { Category, Transaction, TransactionType } from "@/data/types";
 import { currencySymbol, formatAmountOnly, parseAmountFromDigits } from "@/lib/format";
 import { useAppDispatch, useAppState } from "@/store/AppStateProvider";
 import { cardInvoices, groupAccounts, invoiceLabel } from "@/store/selectors";
-import type { NewTransactionInput } from "@/store/types";
+import type { EditScope, NewTransactionInput, UpdateTransactionInput } from "@/store/types";
 import "./TransactionForm.css";
 
 interface Props {
@@ -32,6 +32,8 @@ interface Props {
   initialType: TransactionType;
   initialGroupId: string;
   initialCardId?: string;
+  /** When set, the form edits this transaction instead of creating a new one. */
+  transaction?: Transaction;
   onClose: () => void;
 }
 
@@ -41,6 +43,19 @@ const TYPE_TITLES: Record<TransactionType, string> = {
   "despesa-cartao": "Nova Desp. Cartão",
   transferencia: "Nova Transferência",
 };
+
+const EDIT_TITLES: Record<TransactionType, string> = {
+  despesa: "Editar Despesa",
+  receita: "Editar Receita",
+  "despesa-cartao": "Editar Desp. Cartão",
+  transferencia: "Editar Transferência",
+};
+
+const SCOPE_OPTIONS: { value: EditScope; label: string }[] = [
+  { value: "one", label: "Editar somente esta" },
+  { value: "future", label: "Editar esta e as próximas" },
+  { value: "all", label: "Editar todas (incluindo anteriores)" },
+];
 
 const TYPE_OPTIONS: TransactionType[] = ["despesa", "receita", "despesa-cartao", "transferencia"];
 
@@ -123,21 +138,17 @@ function isTransactionFormValid(
   return Boolean(fields.categoryId && fields.accountId);
 }
 
-export function TransactionForm({ open, initialType, initialGroupId, initialCardId, onClose }: Props) {
+export function TransactionForm({ open, initialType, initialGroupId, initialCardId, transaction, onClose }: Props) {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const toast = useToast();
   const dateInputRef = useRef<HTMLInputElement>(null);
 
+  const isEdit = transaction != null;
+
   // core fields
   const [type, setType] = useState<TransactionType>(initialType);
   const [groupId, setGroupId] = useState(initialGroupId);
-  useEffect(() => {
-    if (!open) return;
-    setType(initialType);
-    setGroupId(initialGroupId);
-    if (initialCardId) setCardId(initialCardId);
-  }, [open, initialType, initialGroupId, initialCardId]);
   const [amount, setAmount] = useState(0);
   const [date, setDate] = useState(todayISO());
   const [description, setDescription] = useState("");
@@ -148,6 +159,8 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
   const [cardId, setCardId] = useState("");
   const [invoiceId, setInvoiceId] = useState("");
   const [settled, setSettled] = useState(true);
+  const [ignored, setIgnored] = useState(false);
+  const [editScope, setEditScope] = useState<EditScope>("one");
 
   // extra fields (Mais detalhes)
   const [tags, setTags] = useState("");
@@ -233,6 +246,42 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
       return invoices[0]?.id ?? "";
     });
   }, [open, type, cardId, invoices]);
+
+  // Init on open. Declared after the auto-default effects above so its values
+  // win the initial commit; later commits keep valid prefilled selections.
+  useEffect(() => {
+    if (!open) return;
+    if (transaction) {
+      setType(transaction.type);
+      setGroupId(transaction.groupId);
+      setAmount(transaction.amount);
+      setDate(transaction.date);
+      setDescription(transaction.description ?? "");
+      if (transaction.categoryId) setCategoryId(transaction.categoryId);
+      setAccountId(transaction.accountId ?? "");
+      setFromAccountId(transaction.fromAccountId ?? "");
+      setToAccountId(transaction.toAccountId ?? "");
+      setCardId(transaction.cardId ?? "");
+      setInvoiceId(transaction.invoiceId ?? "");
+      setSettled(transaction.settled);
+      setIgnored(transaction.ignored);
+      setEditScope("one");
+      setShowMore(Boolean(transaction.seriesId)); // reveal series scope section
+    } else {
+      setType(initialType);
+      setGroupId(initialGroupId);
+      setAmount(0);
+      setDescription("");
+      setSettled(true);
+      setIgnored(false);
+      setEditScope("one");
+      setShowMore(false);
+      if (initialCardId) setCardId(initialCardId);
+    }
+    setError(undefined);
+    setDescriptionError(undefined);
+  }, [open, transaction, initialType, initialGroupId, initialCardId]);
+
   const categories = state.categories.filter((c) => (type === "receita" ? c.kind === "income" : c.kind === "expense"));
 
   const isFormValid = useMemo(
@@ -308,7 +357,41 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
     return { type, ...common, categoryId, accountId, settled, recurrence };
   };
 
+  const buildUpdate = (): UpdateTransactionInput | null => {
+    setDescriptionError(undefined);
+    if (amount === 0) {
+      setError("Deve ter um valor diferente de 0");
+      return null;
+    }
+    setError(undefined);
+    const trimmedDescription = description.trim();
+    if (!trimmedDescription) {
+      setDescriptionError("Informe uma descrição");
+      return null;
+    }
+    if (type === "transferencia" && fromAccountId === toAccountId) {
+      setError("Origem e destino devem ser diferentes");
+      return null;
+    }
+    const base = { amount, date, description: trimmedDescription, ignored };
+    if (type === "transferencia") {
+      return { ...base, fromAccountId, toAccountId, settled: true };
+    }
+    if (type === "despesa-cartao") {
+      return { ...base, categoryId, settled: true };
+    }
+    return { ...base, categoryId, accountId, settled };
+  };
+
   const save = (again: boolean) => {
+    if (isEdit && transaction) {
+      const update = buildUpdate();
+      if (!update) return;
+      dispatch({ kind: "UPDATE_TRANSACTION", id: transaction.id, update, scope: editScope });
+      toast.show("Lançamento atualizado");
+      onClose();
+      return;
+    }
     const input = buildInput();
     if (!input) return;
     dispatch({ kind: "ADD_TRANSACTION", input });
@@ -351,8 +434,8 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
       </label>
       <div className="txform__divider" />
 
-      {/* Despesa fixa — only for despesa */}
-      {type === "despesa" && (
+      {/* Despesa fixa — only for despesa, create only (series structure not editable) */}
+      {!isEdit && type === "despesa" && (
         <>
           <div className="txform__row">
             <PinIcon size={20} className="txform__row-icon" />
@@ -373,8 +456,8 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
         </>
       )}
 
-      {/* Repetir — despesa and despesa-cartao */}
-      {(type === "despesa" || type === "despesa-cartao") && (
+      {/* Repetir — despesa and despesa-cartao, create only */}
+      {!isEdit && (type === "despesa" || type === "despesa-cartao") && (
         <>
           <div className="txform__row">
             <RepeatIcon size={20} className="txform__row-icon" />
@@ -423,6 +506,29 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
           </div>
         </>
       )}
+
+      {/* Série — edit of a repeated/installment transaction */}
+      {isEdit && transaction?.seriesId && (
+        <div className="txform__series">
+          <p className="txform__series-title">Atenção! Esta é uma transação repetida.</p>
+          <p className="txform__series-sub">Você deseja:</p>
+          <div className="txform__series-options" role="radiogroup" aria-label="Abrangência da edição">
+            {SCOPE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={editScope === opt.value}
+                className={`txform__radio${editScope === opt.value ? " is-active" : ""}`}
+                onClick={() => setEditScope(opt.value)}
+              >
+                <span className="txform__radio-dot" aria-hidden="true" />
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -430,7 +536,7 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
     <Presentation
       open={open}
       onClose={onClose}
-      ariaLabel="Novo lançamento"
+      ariaLabel={isEdit ? "Editar lançamento" : "Novo lançamento"}
       panelClass={showMore ? "is-wide" : ""}
       closeOnBackdropClick={false}
     >
@@ -444,14 +550,16 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
           <button
             type="button"
             className={`txform__type-btn txform__type-btn--${type}`}
-            disabled={type === "transferencia"}
+            disabled={type === "transferencia" || isEdit}
             aria-expanded={expanded === "type"}
             aria-haspopup="listbox"
             onClick={(e) => toggle("type", e)}
           >
             <span className="txform__type-label txform__type-label--mobile">{TYPE_LABELS[type]}</span>
-            <span className="txform__type-label txform__type-label--desktop">{TYPE_TITLES[type]}</span>
-            {type !== "transferencia" && (
+            <span className="txform__type-label txform__type-label--desktop">
+              {isEdit ? EDIT_TITLES[type] : TYPE_TITLES[type]}
+            </span>
+            {type !== "transferencia" && !isEdit && (
               <ChevronDownIcon
                 size={14}
                 className={`txform__type-caret txform__chevron${expanded === "type" ? " is-open" : ""}`}
@@ -731,6 +839,36 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
               </>
             )}
 
+            {/* IGNORAR — edit only */}
+            {isEdit && type !== "transferencia" && (
+              <>
+                <div
+                  className="txform__row"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setIgnored((v) => !v)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setIgnored((v) => !v);
+                    }
+                  }}
+                >
+                  <FileTextIcon size={20} className="txform__row-icon" />
+                  <span className="txform__row-label txform__row-label--grow">Ignorar transação</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={ignored}
+                    aria-label="Ignorar transação"
+                    tabIndex={-1}
+                    className={`txform__toggle${ignored ? ` txform__toggle--on txform__toggle--${type}` : ""}`}
+                  />
+                </div>
+                <div className="txform__divider" />
+              </>
+            )}
+
             {/* MAIS DETALHES BUTTON */}
             <div className="txform__more-wrap">
               <button type="button" className="txform__more-btn" onClick={() => setShowMore((s) => !s)}>
@@ -760,14 +898,16 @@ export function TransactionForm({ open, initialType, initialGroupId, initialCard
 
       {/* FOOTER — full width */}
       <footer className="txform__footer">
-        <button
-          type="button"
-          className="txform__btn-secondary"
-          disabled={!isFormValid}
-          onClick={() => save(true)}
-        >
-          SALVAR E CRIAR NOVA
-        </button>
+        {!isEdit && (
+          <button
+            type="button"
+            className="txform__btn-secondary"
+            disabled={!isFormValid}
+            onClick={() => save(true)}
+          >
+            SALVAR E CRIAR NOVA
+          </button>
+        )}
         <button
           type="button"
           className={`txform__btn-primary txform__btn-primary--${type}`}

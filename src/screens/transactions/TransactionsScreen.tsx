@@ -12,6 +12,7 @@ interface Props {
   month: number;
   year: number;
   monthLabel: string;
+  onEditTransaction?: (tx: Transaction) => void;
 }
 
 const WEEKDAYS = [
@@ -36,7 +37,7 @@ function signed(tx: Transaction): number {
   return -tx.amount;
 }
 
-export function TransactionsScreen({ groupId, month, year, monthLabel }: Props) {
+export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTransaction }: Props) {
   const state = useAppState();
   const [filter, setFilter] = useState<TransactionFilter>("all");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -96,7 +97,23 @@ export function TransactionsScreen({ groupId, month, year, monthLabel }: Props) 
           <h3 className="txlist__day-head">{dayHeading(day)}</h3>
           <ul className="txlist__items">
             {items.map((t) => (
-              <li key={t.id} className="txlist__item">
+              <li
+                key={t.id}
+                className={`txlist__item${onEditTransaction ? " txlist__item--tappable" : ""}`}
+                role={onEditTransaction ? "button" : undefined}
+                tabIndex={onEditTransaction ? 0 : undefined}
+                onClick={onEditTransaction ? () => onEditTransaction(t) : undefined}
+                onKeyDown={
+                  onEditTransaction
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onEditTransaction(t);
+                        }
+                      }
+                    : undefined
+                }
+              >
                 <div className="txlist__item-main">
                   <span className="txlist__item-title">
                     {t.description ||

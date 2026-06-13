@@ -39,6 +39,22 @@ export interface NewTransactionInput {
   installments?: number;
 }
 
+/** Which occurrences of a series an edit applies to. */
+export type EditScope = "one" | "future" | "all";
+
+/** Editable fields of an existing transaction (no type/recurrence/series changes). */
+export interface UpdateTransactionInput {
+  amount: number;
+  date: string;
+  description?: string;
+  categoryId?: string;
+  accountId?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+  settled: boolean;
+  ignored: boolean;
+}
+
 export type AdjustMode = "create-tx" | "modify-initial";
 
 export interface AdjustBalanceInput {
@@ -70,6 +86,7 @@ export interface PayInvoiceInput {
 
 export type Action =
   | { kind: "ADD_TRANSACTION"; input: NewTransactionInput }
+  | { kind: "UPDATE_TRANSACTION"; id: string; update: UpdateTransactionInput; scope: EditScope }
   | { kind: "ADJUST_BALANCE"; input: AdjustBalanceInput }
   | { kind: "DELETE_TRANSACTION"; id: string }
   | { kind: "ADD_CREDIT_CARD"; input: NewCreditCardInput }

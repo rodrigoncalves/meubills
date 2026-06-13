@@ -3,7 +3,7 @@ import { CardIcon, ChevronLeftIcon, PlusIcon, ReceiptIcon } from "@/components/i
 import { CardRow } from "@/components/CardRow";
 import { useToast } from "@/components/Toast";
 import { resolveGroup } from "@/data/mock";
-import type { CreditCard, Currency, Invoice } from "@/data/types";
+import type { CreditCard, Currency, Invoice, Transaction } from "@/data/types";
 import { formatMoney } from "@/lib/format";
 import { getInvoiceStatus, isInvoiceOverdue } from "@/lib/card-utils";
 import { useAppDispatch, useAppState } from "@/store/AppStateProvider";
@@ -20,12 +20,13 @@ import "./CardsScreen.css";
 interface Props {
   activeGroupId: string;
   onAddCardExpense: (cardId: string) => void;
+  onEditTransaction?: (tx: Transaction) => void;
   initialDetail?: { cardId: string; month: number; year: number };
 }
 
 type DetailView = { cardId: string; month: number; year: number };
 
-export function CardsScreen({ activeGroupId, onAddCardExpense, initialDetail }: Props) {
+export function CardsScreen({ activeGroupId, onAddCardExpense, onEditTransaction, initialDetail }: Props) {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -176,6 +177,7 @@ export function CardsScreen({ activeGroupId, onAddCardExpense, initialDetail }: 
         year={detail.year}
         onBack={() => setDetail(null)}
         onAddCardExpense={onAddCardExpense}
+        onEditTransaction={onEditTransaction}
       />
     );
   }

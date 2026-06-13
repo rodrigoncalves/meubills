@@ -6,7 +6,7 @@ import { MonthSheet } from "@/components/MonthSheet";
 import type { NewAction } from "@/components/NewActionsList";
 import { Sidebar } from "@/components/Sidebar";
 import { activeGroupId } from "@/data/mock";
-import type { TransactionType } from "@/data/types";
+import type { Transaction, TransactionType } from "@/data/types";
 import { AccountsScreen } from "@/screens/accounts/AccountsScreen";
 import { DashboardDesktop } from "@/screens/dashboard/DashboardDesktop";
 import { HomeScreen } from "@/screens/home/HomeScreen";
@@ -35,6 +35,7 @@ export function App() {
   const [formOpen, setFormOpen] = useState(false);
   const [formType, setFormType] = useState<TransactionType>("despesa");
   const [formCardId, setFormCardId] = useState<string | undefined>(undefined);
+  const [editTx, setEditTx] = useState<Transaction | undefined>(undefined);
 
   const [cardNavDetail, setCardNavDetail] = useState<{ cardId: string; month: number; year: number } | undefined>(undefined);
 
@@ -94,11 +95,13 @@ export function App() {
               month={month}
               year={year}
               monthLabel={monthLabel}
+              onEditTransaction={setEditTx}
             />
           ) : tab === "cartoes" ? (
             <CardsScreen
               activeGroupId={groupId}
               onAddCardExpense={handleAddCardExpense}
+              onEditTransaction={setEditTx}
               initialDetail={cardNavDetail}
             />
           ) : tab === "mais" ? (
@@ -113,6 +116,7 @@ export function App() {
             <CardsScreen
               activeGroupId={groupId}
               onAddCardExpense={handleAddCardExpense}
+              onEditTransaction={setEditTx}
             />
           ) : desktopView === "accounts" ? (
             <AccountsScreen />
@@ -122,6 +126,7 @@ export function App() {
               month={month}
               year={year}
               monthLabel={monthLabel}
+              onEditTransaction={setEditTx}
             />
           ) : (
             <DashboardDesktop
@@ -165,11 +170,15 @@ export function App() {
       </div>
 
       <TransactionForm
-        open={formOpen}
-        initialType={formType}
-        initialGroupId={groupId}
-        initialCardId={formCardId}
-        onClose={() => setFormOpen(false)}
+        open={formOpen || editTx !== undefined}
+        transaction={editTx}
+        initialType={editTx?.type ?? formType}
+        initialGroupId={editTx?.groupId ?? groupId}
+        initialCardId={editTx?.cardId ?? formCardId}
+        onClose={() => {
+          setFormOpen(false);
+          setEditTx(undefined);
+        }}
       />
     </div>
   );

@@ -910,7 +910,7 @@
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   overflow: visible;
   background: var(--bg-app);
   padding: 0 var(--space-5) var(--space-6);
@@ -964,11 +964,14 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: filter 150ms;
+  box-shadow: 0 10px 24px -6px rgb(0 0 0 / 0.45), 0 2px 6px rgb(0 0 0 / 0.25);
+  transition: filter 150ms, box-shadow 150ms, transform 150ms;
 }
 
 .txform__btn-primary:hover:not(:disabled) {
   filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -6px rgb(0 0 0 / 0.5), 0 3px 8px rgb(0 0 0 / 0.3);
 }
 
 .txform__btn-primary--despesa {
@@ -990,4 +993,6 @@
   color: var(--text-muted);
   cursor: not-allowed;
   filter: none;
+  box-shadow: none;
+  transform: none;
 }

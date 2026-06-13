@@ -92,9 +92,9 @@
 }
 .txlist__swipe-actions {
   position: absolute;
-  top: 0;
+  top: 1px;
   right: 0;
-  bottom: 0;
+  bottom: 1px;
   display: flex;
 }
 .txlist__swipe-btn {

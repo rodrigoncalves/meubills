@@ -84,3 +84,162 @@
   text-align: center;
   color: var(--text-muted, #9a9aa3);
 }
+
+/* ── Mobile swipeable row ── */
+.txlist__swipe {
+  position: relative;
+  overflow: hidden;
+}
+.txlist__swipe-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+}
+.txlist__swipe-btn {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 100%;
+  color: #fff;
+}
+.txlist__swipe-btn--pay {
+  background: var(--income, rgb(54, 211, 93));
+}
+.txlist__swipe-btn--del {
+  background: var(--expense, rgb(255, 80, 80));
+}
+.txlist__swipe-fg {
+  position: relative;
+  background: var(--bg-app, #121214);
+  will-change: transform;
+  transition: transform 0.2s var(--ease-out, ease);
+  touch-action: pan-y;
+}
+.txlist__swipe-fg .txlist__item {
+  cursor: pointer;
+}
+
+/* ── Status badge (Situação) ── */
+.txlist__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  white-space: nowrap;
+  font-size: var(--fs-data-label, 13px);
+}
+.txlist__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--text-muted, #9a9aa3);
+}
+.txlist__status--paid {
+  color: var(--income, rgb(54, 211, 93));
+}
+.txlist__status--paid .txlist__status-dot {
+  background: var(--income, rgb(54, 211, 93));
+}
+.txlist__status--pending {
+  color: var(--warning, rgb(245, 184, 66));
+}
+.txlist__status--pending .txlist__status-dot {
+  background: var(--warning, rgb(245, 184, 66));
+}
+.txlist__status--neutral {
+  color: var(--text-muted, #9a9aa3);
+}
+
+/* ── Desktop table (hidden on mobile) ── */
+.txlist__table-wrap {
+  display: none;
+}
+.txlist__mobile {
+  display: block;
+}
+
+.txlist__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.txlist__table th {
+  padding: var(--space-3, 12px);
+  font-size: var(--fs-data-label, 13px);
+  font-weight: 600;
+  color: var(--text-secondary, #c4c4cc);
+  text-align: left;
+  border-bottom: 1px solid var(--border, #2a2a30);
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+}
+.txlist__table th.txlist__th-plain {
+  cursor: default;
+}
+.txlist__table th.is-sorted {
+  color: var(--text-primary, #fff);
+}
+.txlist__table th .sort-arrow {
+  margin-left: 4px;
+  opacity: 0.6;
+}
+.txlist__table th.is-sorted .sort-arrow {
+  opacity: 1;
+  color: var(--credit, rgb(43, 174, 163));
+}
+.txlist__table td {
+  padding: var(--space-3, 12px);
+  font-size: var(--fs-body, 15px);
+  color: var(--text-primary, #fff);
+  border-bottom: 1px solid var(--border, #2a2a30);
+  vertical-align: middle;
+}
+.txlist__table td.txlist__amount {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.txlist__cat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+.txlist__cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+.txlist__acts {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-start;
+}
+.txlist__act {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-muted, #9a9aa3);
+  transition: color var(--dur, 0.15s) var(--ease-out, ease);
+}
+.txlist__act--pay:hover {
+  color: var(--income, rgb(54, 211, 93));
+}
+.txlist__act--edit:hover {
+  color: var(--text-primary, #fff);
+}
+.txlist__act--del:hover {
+  color: var(--expense, rgb(255, 80, 80));
+}
+
+@media (min-width: 520px) {
+  .txlist__mobile {
+    display: none;
+  }
+  .txlist__table-wrap {
+    display: block;
+  }
+  .txlist__header {
+    align-items: flex-start;
+  }
+}

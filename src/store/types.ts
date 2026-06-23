@@ -74,7 +74,18 @@ export interface NewCreditCardInput {
 }
 
 export type CreditCardUpdate = Partial<
-  Pick<CreditCard, "name" | "totalLimit" | "closingDay" | "dueDay" | "accountId" | "archived" | "dateLabel" | "closingLabel" | "dueLabel">
+  Pick<
+    CreditCard,
+    | "name"
+    | "totalLimit"
+    | "closingDay"
+    | "dueDay"
+    | "accountId"
+    | "archived"
+    | "dateLabel"
+    | "closingLabel"
+    | "dueLabel"
+  >
 >;
 
 export interface PayInvoiceInput {
@@ -84,11 +95,17 @@ export interface PayInvoiceInput {
   amount: number;
 }
 
+export type AccountUpdate = Partial<
+  Pick<Account, "name" | "includeInTotal" | "groupId" | "initialBalance" | "archived">
+>;
+
 export type Action =
   | { kind: "ADD_TRANSACTION"; input: NewTransactionInput }
   | { kind: "UPDATE_TRANSACTION"; id: string; update: UpdateTransactionInput; scope: EditScope }
   | { kind: "ADJUST_BALANCE"; input: AdjustBalanceInput }
   | { kind: "DELETE_TRANSACTION"; id: string }
+  | { kind: "ADD_ACCOUNT"; account: Omit<Account, "id"> }
+  | { kind: "UPDATE_ACCOUNT"; accountId: string; update: AccountUpdate }
   | { kind: "ADD_CREDIT_CARD"; input: NewCreditCardInput }
   | { kind: "UPDATE_CREDIT_CARD"; cardId: string; update: CreditCardUpdate }
   | { kind: "DELETE_CREDIT_CARD"; cardId: string }

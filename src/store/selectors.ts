@@ -49,8 +49,40 @@ export function groupAccounts(state: AppState, groupId: string): Account[] {
 export function homeBalance(state: AppState, groupId: string): number {
   return round2(
     groupAccounts(state, groupId)
-      .filter((a) => a.includeInTotal)
+      .filter((a) => a.includeInTotal && !a.archived)
       .reduce((sum, a) => sum + accountBalance(state, a.id), 0),
+  );
+}
+
+function lastDayISO(month: number, year: number): string {
+  const d = new Date(year, month + 1, 0);
+  return `${year}-${String(month + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+export function accountPredictedBalance(state: AppState, accountId: string, month: number, year: number): number {
+  const account = state.accounts.find((a) => a.id === accountId);
+  if (!account) return 0;
+  const endISO = lastDayISO(month, year);
+  let balance = account.initialBalance;
+  for (const t of state.transactions) {
+    if (t.ignored) continue;
+    if (t.date > endISO) continue;
+    if (t.accountId === accountId) {
+      balance += t.type === "receita" ? t.amount : -t.amount;
+    }
+    if (t.type === "transferencia") {
+      if (t.fromAccountId === accountId) balance -= t.amount;
+      if (t.toAccountId === accountId) balance += t.amount;
+    }
+  }
+  return round2(balance);
+}
+
+export function homePredictedBalance(state: AppState, groupId: string, month: number, year: number): number {
+  return round2(
+    groupAccounts(state, groupId)
+      .filter((a) => a.includeInTotal && !a.archived)
+      .reduce((sum, a) => sum + accountPredictedBalance(state, a.id, month, year), 0),
   );
 }
 
@@ -58,23 +90,13 @@ export function monthIncome(state: AppState, groupId: string, month: number, yea
   const base = state.baseSummaryByGroup[groupId]?.income ?? 0;
   const delta = state.transactions
     .filter(
-      (t) =>
-        t.groupId === groupId &&
-        t.type === "receita" &&
-        !t.ignored &&
-        !t.adjustment &&
-        inMonth(t, month, year),
+      (t) => t.groupId === groupId && t.type === "receita" && !t.ignored && !t.adjustment && inMonth(t, month, year),
     )
     .reduce((sum, t) => sum + t.amount, 0);
   return round2(base + delta);
 }
 
-export function monthExpense(
-  state: AppState,
-  groupId: string,
-  month: number,
-  year: number,
-): number {
+export function monthExpense(state: AppState, groupId: string, month: number, year: number): number {
   const base = state.baseSummaryByGroup[groupId]?.expense ?? 0;
   const delta = state.transactions
     .filter(
@@ -115,26 +137,15 @@ export function invoiceLabel(month: number, year: number): string {
 }
 
 export function cardInvoices(state: AppState, cardId: string) {
-  return state.invoices
-    .filter((inv) => inv.cardId === cardId)
-    .sort((a, b) => a.year - b.year || a.month - b.month);
+  return state.invoices.filter((inv) => inv.cardId === cardId).sort((a, b) => a.year - b.year || a.month - b.month);
 }
 
 export function cardsByGroup(state: AppState, groupId: string, includeArchived = false) {
-  return state.cards.filter(
-    (c) => c.groupId === groupId && (includeArchived || !c.archived),
-  );
+  return state.cards.filter((c) => c.groupId === groupId && (includeArchived || !c.archived));
 }
 
-export function invoiceForMonth(
-  state: AppState,
-  cardId: string,
-  month: number,
-  year: number,
-) {
-  return state.invoices.find(
-    (inv) => inv.cardId === cardId && inv.month === month && inv.year === year,
-  );
+export function invoiceForMonth(state: AppState, cardId: string, month: number, year: number) {
+  return state.invoices.find((inv) => inv.cardId === cardId && inv.month === month && inv.year === year);
 }
 
 export function invoiceTransactions(state: AppState, invoiceId: string) {

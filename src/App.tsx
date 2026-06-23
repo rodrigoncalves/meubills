@@ -8,10 +8,10 @@ import { Sidebar } from "@/components/Sidebar";
 import { activeGroupId } from "@/data/mock";
 import type { Transaction, TransactionType } from "@/data/types";
 import { AccountsScreen } from "@/screens/accounts/AccountsScreen";
+import { CardsScreen } from "@/screens/cards/CardsScreen";
 import { DashboardDesktop } from "@/screens/dashboard/DashboardDesktop";
 import { HomeScreen } from "@/screens/home/HomeScreen";
 import { TransactionForm } from "@/screens/transaction/TransactionForm";
-import { CardsScreen } from "@/screens/cards/CardsScreen";
 import { TransactionsScreen } from "@/screens/transactions/TransactionsScreen";
 import "./App.css";
 
@@ -20,9 +20,7 @@ type Tab = "principal" | "transacoes" | "cartoes" | "mais";
 export function App() {
   const [tab, setTab] = useState<Tab>("principal");
   const [groupId, setGroupId] = useState(activeGroupId);
-  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions" | "cards">(
-    "dashboard",
-  );
+  const [desktopView, setDesktopView] = useState<"dashboard" | "accounts" | "transactions" | "cards">("dashboard");
 
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
@@ -37,7 +35,10 @@ export function App() {
   const [formCardId, setFormCardId] = useState<string | undefined>(undefined);
   const [editTx, setEditTx] = useState<Transaction | undefined>(undefined);
 
-  const [cardNavDetail, setCardNavDetail] = useState<{ cardId: string; month: number; year: number } | undefined>(undefined);
+  const [cardNavDetail, setCardNavDetail] = useState<{ cardId: string; month: number; year: number } | undefined>(
+    undefined,
+  );
+  const [txAccountFilter, setTxAccountFilter] = useState<string | undefined>(undefined);
 
   const handleCardTap = (cardId: string, month: number, year: number) => {
     setCardNavDetail({ cardId, month, year });
@@ -69,6 +70,12 @@ export function App() {
     setYear(y);
   };
 
+  const handleViewAccountTransactions = (accountId: string) => {
+    setTxAccountFilter(accountId);
+    if (tab !== "transacoes") setTab("transacoes");
+    if (desktopView !== "transactions") setDesktopView("transactions");
+  };
+
   return (
     <div className="app-shell">
       <div className="app-shell__sidebar">
@@ -86,7 +93,10 @@ export function App() {
               monthLabel={monthLabel}
               onOpenGroupSwitcher={() => setGroupSheetOpen(true)}
               onOpenMonthPicker={() => setMonthSheetOpen(true)}
-              onOpenCards={() => { setCardNavDetail(undefined); setTab("cartoes"); }}
+              onOpenCards={() => {
+                setCardNavDetail(undefined);
+                setTab("cartoes");
+              }}
               onCardTap={handleCardTap}
             />
           ) : tab === "transacoes" ? (
@@ -95,6 +105,8 @@ export function App() {
               month={month}
               year={year}
               monthLabel={monthLabel}
+              accountId={txAccountFilter}
+              onClearAccountFilter={() => setTxAccountFilter(undefined)}
               onEditTransaction={setEditTx}
             />
           ) : tab === "cartoes" ? (
@@ -105,7 +117,15 @@ export function App() {
               initialDetail={cardNavDetail}
             />
           ) : tab === "mais" ? (
-            <AccountsScreen />
+            <AccountsScreen
+              groupId={groupId}
+              month={month}
+              year={year}
+              monthLabel={monthLabel}
+              onOpenMonthPicker={() => setMonthSheetOpen(true)}
+              onSelectMonth={handleSelectMonth}
+              onViewAccountTransactions={handleViewAccountTransactions}
+            />
           ) : (
             <Placeholder tab={tab} />
           )}
@@ -119,13 +139,23 @@ export function App() {
               onEditTransaction={setEditTx}
             />
           ) : desktopView === "accounts" ? (
-            <AccountsScreen />
+            <AccountsScreen
+              groupId={groupId}
+              month={month}
+              year={year}
+              monthLabel={monthLabel}
+              onOpenMonthPicker={() => setMonthSheetOpen(true)}
+              onSelectMonth={handleSelectMonth}
+              onViewAccountTransactions={handleViewAccountTransactions}
+            />
           ) : desktopView === "transactions" ? (
             <TransactionsScreen
               groupId={groupId}
               month={month}
               year={year}
               monthLabel={monthLabel}
+              accountId={txAccountFilter}
+              onClearAccountFilter={() => setTxAccountFilter(undefined)}
               onEditTransaction={setEditTx}
             />
           ) : (
@@ -160,14 +190,15 @@ export function App() {
           activeId={groupId}
           onSelect={setGroupId}
         />
-        <MonthSheet
-          open={monthSheetOpen}
-          onClose={() => setMonthSheetOpen(false)}
-          month={month}
-          year={year}
-          onSelect={handleSelectMonth}
-        />
       </div>
+
+      <MonthSheet
+        open={monthSheetOpen}
+        onClose={() => setMonthSheetOpen(false)}
+        month={month}
+        year={year}
+        onSelect={handleSelectMonth}
+      />
 
       <TransactionForm
         open={formOpen || editTx !== undefined}

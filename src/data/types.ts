@@ -54,6 +54,8 @@ export interface Account {
   initialBalance: number;
   /** Whether this account's balance counts toward the Home "saldo atual". */
   includeInTotal: boolean;
+  /** Soft delete — hidden from list when true. */
+  archived?: boolean;
 }
 
 export type CategoryKind = "expense" | "income";

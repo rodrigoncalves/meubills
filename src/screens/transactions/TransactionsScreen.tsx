@@ -14,20 +14,14 @@ interface Props {
   month: number;
   year: number;
   monthLabel: string;
+  accountId?: string;
+  onClearAccountFilter?: () => void;
   onEditTransaction?: (tx: Transaction) => void;
 }
 
 type SortCol = "date" | "description" | "category" | "account" | "amount";
 
-const WEEKDAYS = [
-  "Domingo",
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
-];
+const WEEKDAYS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
 
 function dayHeading(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
@@ -46,11 +40,7 @@ function categoryOf(t: Transaction, state: AppState) {
 }
 
 function descriptionLabel(t: Transaction, state: AppState): string {
-  return (
-    t.description ||
-    categoryOf(t, state)?.name ||
-    (t.type === "transferencia" ? "Transferência" : "Lançamento")
-  );
+  return t.description || categoryOf(t, state)?.name || (t.type === "transferencia" ? "Transferência" : "Lançamento");
 }
 
 function accountLabel(t: Transaction, state: AppState): string {
@@ -75,12 +65,7 @@ function canPay(t: Transaction): boolean {
   return !t.settled && (t.type === "despesa" || t.type === "receita");
 }
 
-function sortRows(
-  rows: Transaction[],
-  col: SortCol,
-  dir: "asc" | "desc",
-  state: AppState,
-): Transaction[] {
+function sortRows(rows: Transaction[], col: SortCol, dir: "asc" | "desc", state: AppState): Transaction[] {
   const sign = dir === "asc" ? 1 : -1;
   return [...rows].sort((a, b) => {
     switch (col) {
@@ -101,7 +86,15 @@ function sortRows(
   });
 }
 
-export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTransaction }: Props) {
+export function TransactionsScreen({
+  groupId,
+  month,
+  year,
+  monthLabel,
+  accountId,
+  onClearAccountFilter,
+  onEditTransaction,
+}: Props) {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [filter, setFilter] = useState<TransactionFilter>("all");
@@ -111,10 +104,11 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
   const [openRowId, setOpenRowId] = useState<string | null>(null);
 
   const currency = resolveGroup(groupId).currency;
-  const rows = useMemo(
-    () => groupTransactions(state, groupId, month, year, filter),
-    [state, groupId, month, year, filter],
-  );
+  const rows = useMemo(() => {
+    const all = groupTransactions(state, groupId, month, year, filter);
+    if (!accountId) return all;
+    return all.filter((t) => t.accountId === accountId || t.fromAccountId === accountId || t.toAccountId === accountId);
+  }, [state, groupId, month, year, filter, accountId]);
 
   const totals = useMemo(() => {
     let pending = 0;
@@ -139,15 +133,10 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
   }, [rows]);
 
   // sorted flat list (desktop table)
-  const sortedRows = useMemo(
-    () => sortRows(rows, sortCol, sortDir, state),
-    [rows, sortCol, sortDir, state],
-  );
+  const sortedRows = useMemo(() => sortRows(rows, sortCol, sortDir, state), [rows, sortCol, sortDir, state]);
 
   const amountText = (t: Transaction) =>
-    t.type === "transferencia"
-      ? formatMoney(t.amount, currency)
-      : formatMoney(signed(t), currency);
+    t.type === "transferencia" ? formatMoney(t.amount, currency) : formatMoney(signed(t), currency);
 
   const handleDelete = (id: string) => {
     dispatch({ kind: "DELETE_TRANSACTION", id });
@@ -202,6 +191,19 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
         </button>
         <div className="txlist__month">{monthLabel}</div>
       </header>
+      {accountId && (
+        <div className="txlist__account-chip">
+          <span>{state.accounts.find((a) => a.id === accountId)?.name ?? "Conta"}</span>
+          <button
+            type="button"
+            className="txlist__chip-clear"
+            onClick={onClearAccountFilter}
+            aria-label="Remover filtro"
+          >
+            x
+          </button>
+        </div>
+      )}
 
       <div className="txlist__totals">
         <div>
@@ -263,7 +265,11 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
                   const st = statusOf(t);
                   const [y, m, d] = t.date.split("-");
                   return (
-                    <tr key={t.id}>
+                    <tr
+                      key={t.id}
+                      className="txlist__row"
+                      onClick={onEditTransaction ? () => onEditTransaction(t) : undefined}
+                    >
                       <td>
                         <span className={`txlist__status txlist__status--${st.tone}`}>
                           <span className="txlist__status-dot" />
@@ -294,7 +300,10 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
                               type="button"
                               className="txlist__act txlist__act--pay"
                               aria-label="Pagar"
-                              onClick={() => handlePay(t)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePay(t);
+                              }}
                             >
                               <CheckIcon size={16} />
                             </button>
@@ -304,7 +313,10 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
                               type="button"
                               className="txlist__act txlist__act--edit"
                               aria-label="Editar"
-                              onClick={() => onEditTransaction(t)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onEditTransaction(t);
+                              }}
                             >
                               <PencilIcon size={16} />
                             </button>
@@ -313,7 +325,10 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
                             type="button"
                             className="txlist__act txlist__act--del"
                             aria-label="Excluir"
-                            onClick={() => handleDelete(t.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(t.id);
+                            }}
                           >
                             <TrashIcon size={16} />
                           </button>
@@ -328,12 +343,7 @@ export function TransactionsScreen({ groupId, month, year, monthLabel, onEditTra
         </>
       )}
 
-      <TypeFilterMenu
-        open={menuOpen}
-        value={filter}
-        onSelect={setFilter}
-        onClose={() => setMenuOpen(false)}
-      />
+      <TypeFilterMenu open={menuOpen} value={filter} onSelect={setFilter} onClose={() => setMenuOpen(false)} />
     </div>
   );
 }
@@ -401,12 +411,7 @@ function SwipeRow({
     <li className="txlist__swipe">
       <div className="txlist__swipe-actions" aria-hidden={!open}>
         {payable && (
-          <button
-            type="button"
-            className="txlist__swipe-btn txlist__swipe-btn--pay"
-            aria-label="Pagar"
-            onClick={onPay}
-          >
+          <button type="button" className="txlist__swipe-btn txlist__swipe-btn--pay" aria-label="Pagar" onClick={onPay}>
             <CheckIcon size={18} />
           </button>
         )}
@@ -442,9 +447,7 @@ function SwipeRow({
           <div className="txlist__item-main">
             <span className="txlist__item-title">{descriptionLabel(tx, state)}</span>
             <span className="txlist__item-sub">
-              {tx.type === "transferencia"
-                ? accountLabel(tx, state)
-                : categoryOf(tx, state)?.name}
+              {tx.type === "transferencia" ? accountLabel(tx, state) : categoryOf(tx, state)?.name}
             </span>
           </div>
           <span className={`txlist__amount txlist__amount--${tx.type}`}>{amountText}</span>

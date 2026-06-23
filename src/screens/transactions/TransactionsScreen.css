@@ -20,6 +20,31 @@
 .txlist__month {
   color: var(--text-muted, #9a9aa3);
 }
+.txlist__account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill, 999px);
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.txlist__chip-clear {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.8;
+}
+.txlist__chip-clear:hover {
+  opacity: 1;
+}
 .txlist__totals {
   display: flex;
   justify-content: space-between;
@@ -210,6 +235,13 @@
   height: 10px;
   border-radius: 50%;
   flex: none;
+}
+.txlist__row {
+  cursor: pointer;
+  transition: background 120ms;
+}
+.txlist__row:hover {
+  background: var(--surface-raised, #2a2a30);
 }
 .txlist__acts {
   display: flex;

@@ -1,9 +1,9 @@
 import {
   ADJUST_EXPENSE_CATEGORY,
   ADJUST_INCOME_CATEGORY,
-  DEFAULT_EXPENSE_CATEGORY,
   baseInvoiceAmounts,
   baseSummaryByGroup,
+  DEFAULT_EXPENSE_CATEGORY,
   accounts as seedAccounts,
   cards as seedCards,
   categories as seedCategories,
@@ -11,8 +11,8 @@ import {
   invoices as seedInvoices,
 } from "@/data/mock";
 import type { Transaction } from "@/data/types";
-import { expandInstallments, expandRecurrence } from "@/store/expand";
 import { formatClosingLabel, formatDateLabel, formatDueLabel, generateInvoices } from "@/lib/card-utils";
+import { expandInstallments, expandRecurrence } from "@/store/expand";
 import { accountBalance } from "@/store/selectors";
 import type { Action, AppState, NewTransactionInput } from "@/store/types";
 
@@ -76,9 +76,7 @@ export function appReducer(state: AppState, action: Action): AppState {
       if (scope === "one" || !target.seriesId) {
         return {
           ...state,
-          transactions: state.transactions.map((t) =>
-            t.id === id ? { ...t, ...update } : t,
-          ),
+          transactions: state.transactions.map((t) => (t.id === id ? { ...t, ...update } : t)),
         };
       }
 
@@ -105,9 +103,7 @@ export function appReducer(state: AppState, action: Action): AppState {
         return {
           ...state,
           accounts: state.accounts.map((a) =>
-            a.id === accountId
-              ? { ...a, initialBalance: Math.round((a.initialBalance + diff) * 100) / 100 }
-              : a,
+            a.id === accountId ? { ...a, initialBalance: Math.round((a.initialBalance + diff) * 100) / 100 } : a,
           ),
         };
       }
@@ -136,6 +132,19 @@ export function appReducer(state: AppState, action: Action): AppState {
         ...state,
         transactions: state.transactions.filter((t) => t.id !== action.id),
       };
+    case "ADD_ACCOUNT": {
+      const id = nextId("acc");
+      return {
+        ...state,
+        accounts: [...state.accounts, { ...action.account, id }],
+      };
+    }
+    case "UPDATE_ACCOUNT": {
+      return {
+        ...state,
+        accounts: state.accounts.map((a) => (a.id === action.accountId ? { ...a, ...action.update } : a)),
+      };
+    }
     case "ADD_CREDIT_CARD": {
       const id = nextId("card");
       const today = new Date();
@@ -162,9 +171,7 @@ export function appReducer(state: AppState, action: Action): AppState {
     case "UPDATE_CREDIT_CARD": {
       return {
         ...state,
-        cards: state.cards.map((c) =>
-          c.id === action.cardId ? { ...c, ...action.update } : c,
-        ),
+        cards: state.cards.map((c) => (c.id === action.cardId ? { ...c, ...action.update } : c)),
       };
     }
     case "PAY_INVOICE": {
@@ -190,9 +197,7 @@ export function appReducer(state: AppState, action: Action): AppState {
         ...state,
         transactions: [...state.transactions, payment],
         invoices: state.invoices.map((inv) =>
-          inv.id === invoiceId
-            ? { ...inv, paid: true, paymentTransactionId: txId }
-            : inv,
+          inv.id === invoiceId ? { ...inv, paid: true, paymentTransactionId: txId } : inv,
         ),
       };
     }
@@ -201,21 +206,15 @@ export function appReducer(state: AppState, action: Action): AppState {
       if (!inv || !inv.paid || !inv.paymentTransactionId) return state;
       return {
         ...state,
-        transactions: state.transactions.filter(
-          (t) => t.id !== inv.paymentTransactionId,
-        ),
+        transactions: state.transactions.filter((t) => t.id !== inv.paymentTransactionId),
         invoices: state.invoices.map((i) =>
-          i.id === action.invoiceId
-            ? { ...i, paid: false, paymentTransactionId: undefined }
-            : i,
+          i.id === action.invoiceId ? { ...i, paid: false, paymentTransactionId: undefined } : i,
         ),
       };
     }
     case "DELETE_CREDIT_CARD": {
       const { cardId } = action;
-      const invoiceIds = state.invoices
-        .filter((inv) => inv.cardId === cardId)
-        .map((inv) => inv.id);
+      const invoiceIds = state.invoices.filter((inv) => inv.cardId === cardId).map((inv) => inv.id);
       const updatedBase = { ...state.baseInvoiceAmounts };
       for (const invId of invoiceIds) {
         delete updatedBase[invId];
